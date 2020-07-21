@@ -1,0 +1,43 @@
+library(here)
+library(tidyverse)
+library(psych)
+library(rJava)
+library(xlsx)
+library(ggthemes)
+library(gridExtra)
+library(OutliersO3)
+options(scipen=999)
+path <- here("mod_data", "AMIS_toitumine_wide.csv")
+data <- read_csv(path)[, c(1, 125:312)]
+data <- data[, -grep("_9", colnames(data))]
+data <- cbind(data[, 1], data[, -1][, order(colnames(data[-1]))])
+n <- length(colnames(data))
+
+multv_outliers <- function(data, print_n = FALSE) {
+  chunk <- na.omit(data)
+  O3d <- O3prep(chunk[, -1], method=c("BAC", "adjOut", "DDC"),
+                tolBAC=0.000000001, toladj=0.05, tolDDC=0.0001)
+  O3d1 <- O3plotM(O3d, caseNames = chunk$kood)
+  if(print_n) {print(O3d1$nOut)}
+  grid.arrange(O3d1$gO3 + theme(plot.margin = unit(c(0, 1, 0, 0), "cm")), O3d1$gpcp, ncol=1, heights=c(2,1))
+}
+
+# vitamins E and K
+data_vitEK <- data[, c(1, (n-5):n)]
+multv_outliers(data_vitEK)
+
+# vitamins D everything looks OK here
+# data_vitD <- data[, c(1, (n-10):(n-6))]
+# multv_outliers(data_vitD)
+
+# vitamins C & B6
+data_vitC <- data[, c(1, (n-18):(n-11))]
+multv_outliers(data_vitC, print_n = TRUE)
+
+# vitamins B2
+data_vitB2 <- data[, c(1, (n-22):(n-19))]
+multv_outliers(data_vitB2, print_n = TRUE)
+
+# vitamins B12
+data_vitB12 <- data[, c(1, (n-26):(n-23))]
+multv_outliers(data_vitB12, print_n = TRUE)

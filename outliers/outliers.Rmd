@@ -1,0 +1,186 @@
+---
+title             : "ELIKTU analysis of outliers"
+shorttitle        : "outliers"
+author:
+  - name          : "Denis Matrov"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "jazzhole@gmail.com"
+
+affiliation:
+  - id            : "1"
+    institution   : "Tallinn University"
+    
+keywords          : ["outliers", "eliktu"]
+wordcount         : "X"
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, echo = FALSE, include = FALSE, cache=FALSE}
+library("papaja")
+library("ggplot2")
+library("scales")
+library("broom")
+library("kableExtra")
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  cache.comments = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  error = FALSE,
+  echo = FALSE,
+  strip.white = TRUE,
+  comment = "#>",
+  fig.path = "../figures/",
+  results = "asis",
+  tidy = "styler",
+  dev = c('pdf', 'tiff'),
+  dev.args = list(pdf = list(colormodel = 'cmyk'), 
+                  tiff = list(compression = 'lzw')),
+  dpi = 600,
+  fig.width = 7,
+  fig.height = 7,
+  concordance = TRUE,
+  global.par = TRUE
+)
+
+par(font.main = 1, cex.main = 1.05)
+options(knitr.table.format = "latex")
+theme_set(theme_apa(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+```{r multiv_function}
+multv_outliers <- function(data, print_n = FALSE) {
+  chunk <- na.omit(data)
+  O3d <- O3prep(chunk[, -1], method=c("BAC", "adjOut", "DDC"),
+                tolBAC=0.000000001, toladj=0.05, tolDDC=0.0001)
+  O3d1 <- O3plotM(O3d, caseNames = chunk$kood)
+  if(print_n) {print(O3d1$nOut)}
+  grid.arrange(O3d1$gO3 + theme(plot.margin = unit(c(0, 1, 0, 0), "cm")), O3d1$gpcp, ncol=1, heights=c(2,1))
+}
+```
+
+
+# Multivariaate analysis of outliers
+
+```{r data-load}
+library(here)
+library(tidyverse)
+library(psych)
+library(ggthemes)
+library(gridExtra)
+library(OutliersO3)
+options(scipen=999)
+path <- here("mod_data", "AMIS_toitumine_wide.csv")
+data <- read_csv(path)[, c(1, 125:312)]
+data <- data[, -grep("_9", colnames(data))]
+data <- cbind(data[, 1], data[, -1][, order(colnames(data[-1]))])
+n <- length(colnames(data))
+```
+
+
+### Vitamins E and K
+$~$
+
+```{r vitam_EK}
+chunk <- data[, c(1, (n-5):n)]
+```
+
+(ref:vitaminsEK) Multivariate outlier analysis for data on vitamins E and K. 
+
+```{r vitamins-EK, results='asis', fig.cap="(ref:vitaminsEK)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-EK-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1899, 1019), c(1, (n-5):n)), row.names = FALSE, caption = "Two cases with significantly outlying scores for vitamins E and K.")
+```
+
+### Vitamin C
+$~$
+
+```{r vitam_C}
+chunk <- data[, c(1, (n-14):(n-11))]
+```
+
+(ref:vitaminsC) Multivariate outlier analysis for data on vitamin C. 
+
+```{r vitamins-C, results='asis', fig.cap="(ref:vitaminsC)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-C-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1995), c(1, (n-14):(n-11))), row.names = FALSE, caption = "One case with significantly outlying scores for vitamin C.")
+```
+
+
+### Vitamin B6
+$~$
+
+```{r vitam_B6}
+chunk <- data[, c(1, (n-18):(n-15))]
+```
+
+(ref:vitaminsB6) Multivariate outlier analysis for data on vitamin B6. 
+
+```{r vitamins-B6, results='asis', fig.cap="(ref:vitaminsB6)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B6-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1610), c(1, (n-18):(n-15))), row.names = FALSE, caption = "One case with significantly outlying scores for vitamins B6.")
+```
+
+### Vitamin B2
+$~$
+
+```{r vitam_B2}
+chunk <- data[, c(1, (n-22):(n-19))]
+```
+
+(ref:vitaminsB2) Multivariate outlier analysis for data on vitamin B2. 
+
+```{r vitamins-B2, results='asis', fig.cap="(ref:vitaminsB2)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B2-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1139, 1404, 1140, 1610, 1546), c(1, (n-22):(n-19))), row.names = FALSE, caption = "Five cases with significantly outlying scores for vitamin B2.")
+```
+
+### Vitamin B12
+$~$
+
+```{r vitam_B12}
+chunk <- data[, c(1, (n-26):(n-23))]
+```
+
+(ref:vitaminsB12) Multivariate outlier analysis for data on vitamin B12. 
+
+```{r vitamins-B12, results='asis', fig.cap="(ref:vitaminsB12)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B12-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1054, 1200, 1714, 1706), c(1, (n-26):(n-23))), row.names = FALSE, caption = "Five cases with significantly outlying scores for vitamin B12.")
+```
