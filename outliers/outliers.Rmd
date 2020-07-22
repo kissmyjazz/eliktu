@@ -182,5 +182,63 @@ multv_outliers(chunk)
 
 
 ```{r vitamins-B12-table, cache=TRUE}
-knitr::kable(subset(data, kood %in% c(1054, 1200, 1714, 1706), c(1, (n-26):(n-23))), row.names = FALSE, caption = "Five cases with significantly outlying scores for vitamin B12.")
+knitr::kable(subset(data, kood %in% c(1054, 1200, 1714, 1706), c(1, (n-26):(n-23))), row.names = FALSE, caption = "Four cases with significantly outlying scores for vitamin B12.")
 ```
+
+### Vitamin B1
+$~$
+
+```{r vitam_B1}
+chunk <- data[, c(1, (n-30):(n-27))]
+```
+
+(ref:vitaminsB1) Multivariate outlier analysis for data on vitamin B1. 
+
+```{r vitamins-B1, results='asis', fig.cap="(ref:vitaminsB1)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B1-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1140, 1610), c(1, (n-30):(n-27))), row.names = FALSE, caption = "Two cases with significantly outlying scores for vitamin B1.")
+```
+
+### Vitamin A
+$~$
+
+```{r vitam_A}
+chunk <- data[, c(1, (n-34):(n-31))]
+```
+
+(ref:vitaminsA) Multivariate outlier analysis for data on vitamin A. 
+
+```{r vitamins-A, results='asis', fig.cap="(ref:vitaminsA)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-A-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1039, 1159, 1530, 1534, 2024, 1706, 1852, 1714, 1200), c(1, (n-34):(n-31))), row.names = FALSE, caption = "Nine cases with significantly outlying scores for vitamin A.")
+```
+
+### Vegetables
+$~$
+
+```{r veg}
+chunk <- data[, c(1, (n-38):(n-35))]
+```
+
+(ref:vegetables) Multivariate outlier analysis for data on vegetables. 
+
+```{r veget, results='asis', fig.cap="(ref:vegetables)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r veget-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1572, 1830, 1169), c(1, (n-38):(n-35))), row.names = FALSE, caption = "Three cases with significantly outlying scores for vegetables.")
+```
+
+### Retinol
+$~$
+Retinol data has a lot of missing values among 18 year olds. 
