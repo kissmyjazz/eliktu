@@ -1,3 +1,6 @@
+# Because generally data on 33 years old subjects is included, the following
+# analysis is applicable to the older cohort only.
+
 library(here)
 library(tidyverse)
 library(psych)
@@ -66,3 +69,83 @@ multv_outliers(data_veg, print_n = TRUE)
 # protein everything looks OK here
 # data_protein <- data[, c(1, (n-53):(n-50))]
 # multv_outliers(data_protein, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# poultry serious issues with the data
+# data_poultry <- data[, c(1, (n-59):(n-58))]
+# multv_outliers(data_poultry, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# pantothen no data for older cohort at 18 years of age, otherwise the data looks OK.
+# data_panto <- data[, c(1, (n-61):(n-60))]
+# multv_outliers(data_panto, print_n = TRUE)
+
+# other drinks everything looks OK here
+# data_drinks <- data[, c(1, (n-67):(n-64))]
+# multv_outliers(data_drinks, print_n = TRUE)
+
+# niacin everything looks OK here
+# data_niacin <- data[, c(1, (n-73):(n-70))]
+# multv_outliers(data_niacin, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# dairy
+data_dairy <- data[, c(1, (n-79):(n-76))]
+multv_outliers(data_dairy, print_n = TRUE)
+
+# meat everything looks OK here
+# data_meat <- data[, c(1, (n-83):(n-80))]
+# multv_outliers(data_meat, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# lipids everything looks OK here
+# data_lipids <- data[, c(1, (n-87):(n-84))]
+# multv_outliers(data_lipids, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# LDL
+data_ldl <- data[, c(1, (n-95):(n-92))]
+multv_outliers(data_ldl, print_n = TRUE)
+
+# HOMA
+data_homa <- data[, c(1, (n-99):(n-96))]
+multv_outliers(data_homa, print_n = TRUE)
+
+# HDL everything looks OK here
+# data_hdl <- data[, c(1, (n-103):(n-100))]
+# multv_outliers(data_hdl, print_n = TRUE)
+
+# fruits & berries
+data_fruits <- data[, c(1, (n-107):(n-104))]
+multv_outliers(data_fruits, print_n = TRUE)
+
+# folate
+data_folate <- data[, c(1, (n-111):(n-108))]
+multv_outliers(data_folate, print_n = TRUE)
+
+# fish data has a lot of 0 values, the multivariate test fails to converge.
+# data_fish <- data[, c(1, (n-115):(n-112))]
+# multv_outliers(data_fish, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# fats everything looks OK here
+data_fats <- data[, c(1, (n-119):(n-116))]
+multv_outliers(data_fats, print_n = TRUE)
+
+# eggs
+data_eggs <- data[, c(1, (n-123):(n-120))]
+multv_outliers(data_eggs, print_n = TRUE)
+
+# chl
+data_chl <- data[, c(1, (n-131):(n-128))]
+multv_outliers(data_chl, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# cereal everything looks OK here
+# data_cereal <- data[, c(1, (n-135):(n-132))]
+# multv_outliers(data_cereal, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# carbohydrates
+data_carbo <- data[, c(1, (n-142):(n-139))]
+multv_outliers(data_carbo, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+
+# biotin there are no scores for 18 years old subjects
+data_biotin <- data[, c(1, (n-148):(n-147))]
+multv_outliers(data_biotin, print_n = TRUE)
+
+# alcohol data has a lot of 0 values, the multivariate test fails to converge.
+# data_alco <- data[, c(1, (n-152):(n-151))]
+# multv_outliers(data_alco, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
