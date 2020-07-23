@@ -1,0 +1,448 @@
+---
+title             : "ELIKTU analysis of outliers (younger cohort)"
+shorttitle        : "outliers"
+author:
+  - name          : "Denis Matrov"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "jazzhole@gmail.com"
+
+affiliation:
+  - id            : "1"
+    institution   : "Tallinn University"
+    
+keywords          : ["outliers", "eliktu"]
+wordcount         : "X"
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, echo = FALSE, include = FALSE, cache=FALSE}
+library("papaja")
+library("ggplot2")
+library("scales")
+library("broom")
+library("kableExtra")
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  cache.comments = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  error = FALSE,
+  echo = FALSE,
+  strip.white = TRUE,
+  comment = "#>",
+  fig.path = "../figures/",
+  results = "asis",
+  tidy = "styler",
+  dev = c('pdf', 'tiff'),
+  dev.args = list(pdf = list(colormodel = 'cmyk'), 
+                  tiff = list(compression = 'lzw')),
+  dpi = 600,
+  fig.width = 7,
+  fig.height = 7,
+  concordance = TRUE,
+  global.par = TRUE
+)
+
+par(font.main = 1, cex.main = 1.05)
+options(knitr.table.format = "latex")
+theme_set(theme_apa(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+```{r multiv_function}
+multv_outliers <- function(data, print_n = FALSE, tolBAC=0.000000001,
+                           toladj=0.05, tolDDC=0.0001) {
+  chunk <- na.omit(data)
+  O3d <- O3prep(chunk[, -1], method=c("BAC", "adjOut", "DDC"),
+                tolBAC=tolBAC, toladj=toladj, tolDDC=tolDDC)
+  O3d1 <- O3plotM(O3d, caseNames = chunk$kood)
+  if(print_n) {print(O3d1$nOut)}
+  grid.arrange(O3d1$gO3 + theme(plot.margin = unit(c(0, 1, 0, 0), "cm")), O3d1$gpcp, ncol=1, heights=c(2,1))
+}
+```
+
+
+# Multivariaate analysis of outliers (Older cohort)
+
+```{r data-load}
+library(here)
+library(tidyverse)
+library(psych)
+library(ggthemes)
+library(gridExtra)
+library(OutliersO3)
+options(scipen=999)
+path <- here("mod_data", "AMIS_toitumine_wide.csv")
+data <- read_csv(path)[, c(1:3, 125:312)]
+data <- subset(data, kohort==1, -c(2, 3))
+data <- data[, -grep("_9", colnames(data))]
+data <- data[, -grep("_33", colnames(data))]
+data <- cbind(data[, 1], data[, -1][, order(colnames(data[-1]))])
+n <- length(colnames(data))
+```
+
+
+## Vitamins E and K
+$~$
+
+```{r vitam_EK}
+chunk <- data[, c(1, (n-5):n)]
+```
+
+(ref:vitaminsEK) Multivariate outlier analysis for data on vitamins E and K. 
+
+```{r vitamins-EK, results='asis', fig.cap="(ref:vitaminsEK)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-EK-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1899, 1019), c(1, (n-5):n)), row.names = FALSE, caption = "Two cases with significantly outlying scores for vitamins E and K.")
+```
+
+## Vitamin C
+$~$
+
+```{r vitam_C}
+chunk <- data[, c(1, (n-14):(n-11))]
+```
+
+(ref:vitaminsC) Multivariate outlier analysis for data on vitamin C. 
+
+```{r vitamins-C, results='asis', fig.cap="(ref:vitaminsC)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-C-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1995), c(1, (n-14):(n-11))), row.names = FALSE, caption = "One case with significantly outlying scores for vitamin C.")
+```
+
+
+## Vitamin B6
+$~$
+
+```{r vitam_B6}
+chunk <- data[, c(1, (n-18):(n-15))]
+```
+
+(ref:vitaminsB6) Multivariate outlier analysis for data on vitamin B6. 
+
+```{r vitamins-B6, results='asis', fig.cap="(ref:vitaminsB6)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B6-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1610), c(1, (n-18):(n-15))), row.names = FALSE, caption = "One case with significantly outlying scores for vitamins B6.")
+```
+
+## Vitamin B2
+$~$
+
+```{r vitam_B2}
+chunk <- data[, c(1, (n-22):(n-19))]
+```
+
+(ref:vitaminsB2) Multivariate outlier analysis for data on vitamin B2. 
+
+```{r vitamins-B2, results='asis', fig.cap="(ref:vitaminsB2)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B2-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1139, 1404, 1140, 1610, 1546), c(1, (n-22):(n-19))), row.names = FALSE, caption = "Five cases with significantly outlying scores for vitamin B2.")
+```
+
+## Vitamin B12
+$~$
+
+```{r vitam_B12}
+chunk <- data[, c(1, (n-26):(n-23))]
+```
+
+(ref:vitaminsB12) Multivariate outlier analysis for data on vitamin B12. 
+
+```{r vitamins-B12, results='asis', fig.cap="(ref:vitaminsB12)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B12-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1054, 1200, 1714, 1706), c(1, (n-26):(n-23))), row.names = FALSE, caption = "Four cases with significantly outlying scores for vitamin B12.")
+```
+
+## Vitamin B1
+$~$
+
+```{r vitam_B1}
+chunk <- data[, c(1, (n-30):(n-27))]
+```
+
+(ref:vitaminsB1) Multivariate outlier analysis for data on vitamin B1. 
+
+```{r vitamins-B1, results='asis', fig.cap="(ref:vitaminsB1)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-B1-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1140, 1610), c(1, (n-30):(n-27))), row.names = FALSE, caption = "Two cases with significantly outlying scores for vitamin B1.")
+```
+
+## Vitamin A
+$~$
+
+```{r vitam_A}
+chunk <- data[, c(1, (n-34):(n-31))]
+```
+
+(ref:vitaminsA) Multivariate outlier analysis for data on vitamin A. 
+
+```{r vitamins-A, results='asis', fig.cap="(ref:vitaminsA)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r vitamins-A-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1039, 1159, 1530, 1534, 2024, 1706, 1852, 1714, 1200), c(1, (n-34):(n-31))), row.names = FALSE, caption = "Nine cases with significantly outlying scores for vitamin A.")
+```
+
+## Vegetables
+$~$
+
+```{r veg}
+chunk <- data[, c(1, (n-38):(n-35))]
+```
+
+(ref:vegetables) Multivariate outlier analysis for data on vegetables. 
+
+```{r veget, results='asis', fig.cap="(ref:vegetables)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r veget-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1572, 1830, 1169), c(1, (n-38):(n-35))), row.names = FALSE, caption = "Three cases with significantly outlying scores for vegetables.")
+```
+
+## Retinol
+$~$
+Retinol data has a lot of missing values among 18 years old subjects. 
+
+## Proteins
+$~$
+Protein data has no cases of putative outliers.
+
+## Poultry
+$~$
+All values for poultry at age 25 are zeros if poultry values exist for age 33.
+
+```{r poultry}
+chunk <- data_poultry <- data[, c(1, (n-59):(n-58))] %>% na.omit()
+```
+
+```{r poultry-table, cache=TRUE}
+knitr::kable(chunk[1:10, ], row.names = FALSE, caption = "At age 25 in the older cohort all poultry values are 0. (Data of first 10 cases are illustrated).")
+```
+
+## Pantothen
+$~$
+No data for older cohort at 18 years of age. 
+Otherwise the data looks OK.
+
+## Other drinks
+$~$
+Non-alcoholic drinks data has no cases of putative outliers.
+
+## Niacin
+$~$
+Niacin data has no cases of putative outliers.
+
+## Dairy
+$~$
+
+```{r dairy}
+chunk <- data[, c(1, (n-79):(n-76))]
+```
+
+(ref:dairy-fig) Multivariate outlier analysis for data on dairy. 
+
+```{r dairy-figure, results='asis', fig.cap="(ref:dairy-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r dairy-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1176), c(1, (n-79):(n-76))), row.names = FALSE, caption = "One case with significantly outlying scores for dairy.")
+```
+
+## Meat
+$~$
+Meat data has no cases of putative outliers.
+
+## Lipids
+$~$
+Overall the data looks to be without outliers.
+
+```{r lipids}
+chunk <- data[, c(1, (n-87):(n-84))]
+```
+
+```{r lipids-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1546), c(1, (n-87):(n-84))), row.names = FALSE, caption = "One case with increasingly high scores for lipids.")
+```
+
+## LDL
+$~$
+LDL data has no measurements for 15 years old subjects, otherwise there are no cases of multivariate outliers.
+
+## HOMA
+$~$
+
+```{r homa}
+chunk <- data[, c(1, (n-99):(n-96))]
+```
+
+(ref:homa-fig) Multivariate outlier analysis for data on HOMA index. 
+
+```{r homa-figure, results='asis', fig.cap="(ref:homa-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r homa-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1843, 1028, 1589), c(1, (n-99):(n-96))), row.names = FALSE, caption = "Three cases with significantly outlying scores for HOMA index.")
+```
+
+## HDL
+$~$
+HDL data has no cases of putative outliers.
+
+## Fruits and berries
+$~$
+
+```{r fruit}
+chunk <- data[, c(1, (n-107):(n-104))]
+```
+
+(ref:fruit-fig) Multivariate outlier analysis for data on fruits and berries. 
+
+```{r fruit-figure, results='asis', fig.cap="(ref:fruit-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r fruit-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1429), c(1, (n-107):(n-104))), row.names = FALSE, caption = "One case with significantly outlying scores for fruits and berries.")
+```
+
+## Folate
+$~$
+
+```{r folate}
+chunk <- data[, c(1, (n-111):(n-108))]
+```
+
+(ref:folate-fig) Multivariate outlier analysis for data on folate. 
+
+```{r folate-figure, results='asis', fig.cap="(ref:folate-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r folate-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1168, 1860), c(1, (n-111):(n-108))), row.names = FALSE, caption = "Two cases with significantly outlying scores for folate.")
+```
+
+## Fish
+$~$
+Fish data has a lot of 0 values, the multivariate test fails to converge.
+
+## Fats
+$~$
+Fats data has no cases of putative outliers.
+
+## Eggs
+$~$
+
+```{r eggs}
+chunk <- data[, c(1, (n-123):(n-120))]
+```
+
+(ref:eggs-fig) Multivariate outlier analysis for data on eggs. 
+
+```{r eggs-figure, results='asis', fig.cap="(ref:eggs-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r eggs-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1825, 2029), c(1, (n-123):(n-120))), row.names = FALSE, caption = "Two cases with significantly outlying scores for eggs.")
+```
+
+
+## CHL
+$~$
+
+```{r chl}
+chunk <- data[, c(1, (n-131):(n-128))]
+```
+
+(ref:chl-fig) Multivariate outlier analysis for data on CHL. 
+
+```{r chl-figure, results='asis', fig.cap="(ref:chl-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+```
+
+
+```{r chl-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1594, 1597), c(1, (n-131):(n-128))), row.names = FALSE, caption = "Two cases with significantly outlying scores for CHL.")
+```
+
+## Cereal
+$~$
+Cereal data has no cases of putative outliers.
+
+## Carbohydrates
+$~$
+Carbohydrates data has no cases of putative outliers.
+
+## Biotin
+$~$
+Biotin data has no measurements for 18 years old subjects.
+
+```{r biotin}
+chunk <- data[, c(1, (n-148):(n-147))]
+```
+
+(ref:biotin-fig) Multivariate outlier analysis for data on biotin. 
+
+```{r biotin-figure, results='asis', fig.cap="(ref:biotin-fig)", fig.height=11, fig.width=10, cache=TRUE}
+multv_outliers(chunk)
+```
+
+
+```{r biotin-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1546), c(1, (n-148):(n-147))), row.names = FALSE, caption = "One case with significantly high scores for biotin.")
+```
+
+## Alcohol
+$~$
+Alcohol data has a lot of 0 values, the multivariate test fails to converge.
