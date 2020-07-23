@@ -34,9 +34,13 @@ multv_outliers(data_vitEK)
 # data_vitD <- data[, c(1, (n-10):(n-6))]
 # multv_outliers(data_vitD)
 
-# vitamins C & B6
-data_vitC <- data[, c(1, (n-18):(n-11))]
+# vitamin C
+data_vitC <- data[, c(1, (n-14):(n-11))]
 multv_outliers(data_vitC, print_n = TRUE)
+
+# vitamin B6
+data_vitB6 <- data[, c(1, (n-18):(n-15))]
+multv_outliers(data_vitB6, print_n = TRUE)
 
 # vitamin B2
 data_vitB2 <- data[, c(1, (n-22):(n-19))]
@@ -138,9 +142,9 @@ multv_outliers(data_chl, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01
 # data_cereal <- data[, c(1, (n-135):(n-132))]
 # multv_outliers(data_cereal, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
 
-# carbohydrates
-data_carbo <- data[, c(1, (n-142):(n-139))]
-multv_outliers(data_carbo, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
+# carbohydrates everything looks OK here
+# data_carbo <- data[, c(1, (n-142):(n-139))]
+# multv_outliers(data_carbo, print_n = TRUE, tolBAC=0.00001, toladj=0.1, tolDDC=0.01)
 
 # biotin there are no scores for 18 years old subjects
 data_biotin <- data[, c(1, (n-148):(n-147))]
