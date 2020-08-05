@@ -1,0 +1,243 @@
+---
+title             : "ELIKTU univariate analysis of outliers"
+shorttitle        : "outliers"
+author:
+  - name          : "Denis Matrov"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "jazzhole@gmail.com"
+
+affiliation:
+  - id            : "1"
+    institution   : "Tallinn University"
+    
+keywords          : ["outliers", "eliktu"]
+wordcount         : "X"
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, echo = FALSE, include = FALSE, cache=FALSE}
+library("papaja")
+library("ggplot2")
+library("scales")
+library("broom")
+library("kableExtra")
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  cache.comments = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  error = FALSE,
+  echo = FALSE,
+  strip.white = TRUE,
+  comment = "#>",
+  fig.path = "../figures/",
+  results = "asis",
+  tidy = "styler",
+  dev = c('pdf', 'tiff'),
+  dev.args = list(pdf = list(colormodel = 'cmyk'), 
+                  tiff = list(compression = 'lzw')),
+  dpi = 600,
+  fig.width = 7,
+  fig.height = 7,
+  concordance = TRUE,
+  global.par = TRUE
+)
+
+par(font.main = 1, cex.main = 1.05)
+options(knitr.table.format = "latex")
+theme_set(theme_apa(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+
+# Univariate analysis of outliers
+
+```{r data-load, cache=FALSE}
+library(here)
+library(tidyverse)
+library(OutlierDetection)
+options(scipen=999)
+path <- here("mod_data", "AMIS_toitumine_wide.csv")
+data <- read_csv(path)
+data <- data[, -grep("_9", colnames(data))]
+col_names <- colnames(data)
+row_names <- data[, 1, drop = TRUE]
+```
+
+## HOMA_15
+Subject 1191 has zero-valued HOMA index
+
+
+## LDL_33
+4 values of LDL are 0s
+
+```{r ldl-33, cache=TRUE}
+test_data <- data[ ,266, drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## HDL_33
+4 values of HDL are 0s
+
+```{r hdl-33, cache=TRUE}
+test_data <- data[ ,265, drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## CHL_33
+4 values of CHL are 0s
+
+```{r chl-33, cache=TRUE}
+test_data <- data[ ,264, drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## HDL_15
+Raw values look binned.
+
+```{r hdl-15, cache=TRUE}
+test_data <- data[ ,256 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+```{r chl-15, cache=TRUE}
+test_data <- data[ ,255 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Cholesterol
+One case of total(?) cholesterol had a significantly low value: table \@ref(tab:cholesterol-table)
+```{r cholesterol-table, cache=TRUE}
+knitr::kable(subset(data, kood %in% c(1385), c(1, 255:257)), row.names = FALSE, caption = "One case with a very small value for cholesterol")
+```
+
+## Alcohol_25
+One value is of more than 3 kg of alcoholic drinks.
+
+```{r alco-25, cache=TRUE}
+test_data <- data[ ,221 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Alcohol_33
+One value at 3 kg and another value at 5 kg of alcoholic drinks. The people who had high values at age 25 are generally no longer outliers this time. 
+
+```{r alco-33, cache=TRUE}
+test_data <- data[ ,254 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Otherdrinks_33
+One value is really very high at 6.8 kg.
+
+```{r otherdrinks-33, cache=TRUE}
+test_data <- data[ ,253 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Eggs_33
+One value is very high.
+
+```{r eggs-33, cache=TRUE}
+test_data <- data[ ,251 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Dairy_25
+One value is rather high.
+
+```{r dairy-25, cache=TRUE}
+test_data <- data[ ,214 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Dairy_33
+One value is rather high. The same person was an outlier at age of 25 years.
+
+```{r dairy-33, cache=TRUE}
+test_data <- data[ ,247 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## SugSweets_25
+One value is very high.
+
+```{r sugsweets-25, cache=TRUE}
+test_data <- data[ ,219 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
