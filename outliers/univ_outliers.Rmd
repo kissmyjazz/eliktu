@@ -80,7 +80,7 @@ row_names <- data[, 1, drop = TRUE]
 ```
 
 ## HOMA_15
-Subject 1191 has zero-valued HOMA index
+Subject 1196 has zero-valued HOMA index
 
 
 ## LDL_33
@@ -151,6 +151,32 @@ One case of total(?) cholesterol had a significantly low value: table \@ref(tab:
 knitr::kable(subset(data, kood %in% c(1385), c(1, 255:257)), row.names = FALSE, caption = "One case with a very small value for cholesterol")
 ```
 
+## Alcohol_15
+This data distribution looks normal to me, I included it for comparison with later ages.
+
+```{r alco-15, cache=TRUE}
+test_data <- data[ ,145 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Alcohol_18
+Two values of 3 kg of alcoholic drinks.
+
+```{r alco-18, cache=TRUE}
+test_data <- data[ ,182 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
 ## Alcohol_25
 One value is of more than 3 kg of alcoholic drinks.
 
@@ -165,10 +191,33 @@ g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
 ```
 
 ## Alcohol_33
-One value at 3 kg and another value at 5 kg of alcoholic drinks. The people who had high values at age 25 are generally no longer outliers this time. 
+One value at 3 kg and another value at 5 kg of alcoholic drinks. The people who had high values at age 25 are generally no longer outliers this time, the same applies for responses given at age 18. To explore the situation further, I also binned Nitridata results into 3 bins to make them comparable to the questionnaire data about light alcohol. The plot shows that Nutridata results are generally in a good agreement with questionnaire data as there are no cases where a person selected option '1' in the questionnaire and showed high alcohol intake in the diary. The questionnaire seems to be a better indicator of the alcohol consumption, as Nutridata results are more prone to the situational fluctuations. Similar results were observed for ages 18 and 25.
 
 ```{r alco-33, cache=TRUE}
 test_data <- data[ ,254 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+```{r alco_quest-33, cache=TRUE}
+data$alko_c_33 <- cut(data$Alcohol_33, 3, labels = c("1", "2", "3"), ordered_result = TRUE)
+alko_data_33 <- data %>% select(alko_c_33, lahja_alko_33) %>% filter(!is.na(.))
+g <- ggplot(alko_data_33, aes(x = alko_c_33, y = lahja_alko_33)) + 
+  geom_jitter(alpha = 0.5, width = 0.16, height = 0.16) + 
+  labs(x = "alcohol Nutridata", y = "light alcohol questionnaire", title = "33 years of age")
+g
+```
+
+
+## Tea_18
+One value is at 3 kg.
+
+```{r tea-18, cache=TRUE}
+test_data <- data[ ,181 , drop = TRUE]
 test_data_na <- test_data[!is.na(test_data)]
 row_names_na <- row_names
 row_names_na <- row_names_na[!is.na(test_data)]
@@ -204,7 +253,7 @@ g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
 ```
 
 ## Dairy_25
-One value is rather high.
+One value is rather high. When binned Nutridata results are plotted against the questionnaire scores, the graph looks reasonable, the number of observations in the top left corner is rather large. 
 
 ```{r dairy-25, cache=TRUE}
 test_data <- data[ ,214 , drop = TRUE]
@@ -215,6 +264,16 @@ names(test_data_na) <- row_names_na
 g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
 g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
 ```
+
+```{r dairy_quest-25, cache=TRUE}
+data$Milkprod_c_25 <- cut(data$Milkprod_25, 3, labels = c("1", "2", "3"), 
+                          ordered_result = TRUE)
+dairy_data_25 <- data %>% select(Milkprod_c_25, piimatooted_25) %>% filter(!is.na(.))
+ggplot(dairy_data_25, aes(x = Milkprod_c_25, y = piimatooted_25)) + 
+  geom_jitter(alpha = 0.5, width = 0.16, height = 0.16) + 
+  labs(x = "dairy Nutridata", y = "dairy questionnaire", title = "25 years of age")  
+```
+
 
 ## Dairy_33
 One value is rather high. The same person was an outlier at age of 25 years.
@@ -241,3 +300,131 @@ names(test_data_na) <- row_names_na
 g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
 g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
 ```
+
+## FruitsBerries_25
+One value is very high.
+
+```{r fruitsberries-25, cache=TRUE}
+test_data <- data[ ,212 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Veget_15
+Some values are quite high.
+
+```{r veget-15, cache=TRUE}
+test_data <- data[ ,133 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Veget_18
+One value is very high.
+
+```{r veget-18, cache=TRUE}
+test_data <- data[ ,171 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Veget_25
+One value is very high. I also plotted the binned Nutridata against the questionnaire scores. 
+
+```{r veget-25, cache=TRUE}
+test_data <- data[ ,211 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+```{r}
+data$Veget_c_25 <- cut(data$Veget_25, 3, labels = c("1", "2", "3"), 
+                          ordered_result = TRUE)
+veget_data_25 <- data %>% select(Veget_c_25, köögivili_25) %>% filter(!is.na(.))
+ggplot(veget_data_25, aes(x = Veget_c_25, y = köögivili_25)) + 
+  geom_jitter(alpha = 0.5, width = 0.16, height = 0.16) + 
+  labs(x = "vegetables Nutridata", y = "vegetables questionnaire", title = "25 years of age")
+```
+
+
+## VitB12_25
+One value is very high.
+
+```{r vitb12-25, cache=TRUE}
+test_data <- data[ ,204 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Retinol_18
+One value is very high.
+
+```{r retinol-18, cache=TRUE}
+test_data <- data[ ,155 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Retinol_25
+One value is very high.
+
+```{r retinol-25, cache=TRUE}
+test_data <- data[ ,192 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## Vit_ARE_25
+One value is very high.
+
+```{r vitare-25, cache=TRUE}
+test_data <- data[ ,191 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
+## carb_g_18
+One value is very high.
+
+```{r carb_g-25, cache=TRUE}
+test_data <- data[ ,149 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
+```
+
