@@ -10,4 +10,3 @@ desc <- describe(data)[125:312, ]
 desc <- desc[order(row.names(desc)),]
 desc <- cbind(indicator=row.names(desc), desc)
 write_csv(desc, here("summary_data", "toitumine_summary.csv"))
-

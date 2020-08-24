@@ -1,0 +1,183 @@
+---
+title             : "ELIKTU analysis of micronutrient data"
+shorttitle        : "outliers"
+author:
+  - name          : "Denis Matrov"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "jazzhole@gmail.com"
+
+affiliation:
+  - id            : "1"
+    institution   : "Tallinn University"
+    
+keywords          : ["outliers", "eliktu"]
+wordcount         : "X"
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, echo = FALSE, include = FALSE, cache=FALSE}
+library("papaja")
+library("ggplot2")
+library("scales")
+library("broom")
+library("kableExtra")
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  cache.comments = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  error = FALSE,
+  echo = FALSE,
+  strip.white = TRUE,
+  comment = "#>",
+  fig.path = "../figures/",
+  results = "asis",
+  tidy = "styler",
+  dev = c('pdf', 'tiff'),
+  dev.args = list(pdf = list(colormodel = 'cmyk'), 
+                  tiff = list(compression = 'lzw')),
+  dpi = 600,
+  fig.width = 7,
+  fig.height = 7,
+  concordance = TRUE,
+  global.par = TRUE
+)
+
+par(font.main = 1, cex.main = 1.05)
+options(knitr.table.format = "latex")
+theme_set(theme_apa(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+
+# Analysis of micronucrient data
+
+I use the following reference sources:
+
+* [1] Pitsi, et al. Eesti toitumis- ja liikumissoovitused 2015. Tervise Arengu
+Instituut. Tallinn, 2017. 
+* [2] Food and Nutrition Board, Institute of Medicine. Manganese. Dietary reference intakes for vitamin A, vitamin K, boron, chromium, copper, iodine, iron, manganese, molybdenum, nickel, silicon, vanadium, and zinc. Washington, D.C.: National Academy Press; 2001:394-419. 
+
+```{r data-load, cache=FALSE}
+library(here)
+library(tidyverse)
+library(OutlierDetection)
+options(scipen=999)
+path <- here("mod_data", "ELIKTU AMIS_cal_BMI_miner.csv")
+data <- read_csv(path)
+data <- data[, -grep("_9", colnames(data))]
+col_names <- colnames(data)
+row_names <- data[, 1, drop = TRUE]
+```
+
+## Manganese
+
+```{r mn-25}
+test_data <- data[ ,127 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+```
+
+The plot of Mn intake at the age of 25 years looks weird and the average intake __`r round(mean(test_data_na), 2)` mg/day__ is rather high as compared to the intkes cited in the literature and normative guidelines. 
+
+> Meie teadmised mangaani ainevahetusest ja madala tarbimise tagajärgedest on inimorganismi vajaduste ja soovitusliku päevase tarbimisnormi määratlemiseks liiga vähesed. Tasakaalu-uuringud on viidanud, et tarbimiskogus 0,74 mg päevas peaks olema igapäevaste mangaanikadude korvamiseks piisav (9). Tarbimiskogused üle 1 mg päevas toovad harilikult kaasa positiivse mangaanitasakaalu (7).
+Mangaani aktsepteeritavaks tarbimiskoguseks täiskasvanutele on umbes 10 mg päevas (10), näiteks USAs on see 9–11 mg (11). [1]
+
+> Patterson and coworkers (1984) analyzed manganese intakes for7 days during each of the four seasons for 28 healthy adults living athome. The mean nutrient density for all subjects was 1.6 mg/1,000kcal. Mean manganese intake for men was 3.4 mg/day and for women,2.7 mg/day. Greger and coworkers (1990) analyzed duplicateportions of all foods and beverages consumed for ten men. Withunrestricted diets, the mean manganese intake was 2.8 mg/day.Daily intakes of manganese throughout the study varied from 0.52to 5.33 mg/day. Based on the Total Diet Study (Appendix TableE-6), median intakes for women and men ranged from 1.6 to 2.3mg/day. In various surveys, average manganese intakes of adultseating Western-type and vegetarian diets ranged from 0.7 to 10.9mg/day (Freeland-Graves, 1994; Gibson, 1994). [2]
+
+```{r mn-25-plot, cache=TRUE}
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "mg", title = "Manganese intake at 25 years")
+```
+
+```{r mn-33}
+test_data <- data[ ,141 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+```
+The average intake at age 33 is even higher __`r round(mean(test_data_na), 2)` mg/day__ but the plot looks more regular.
+
+```{r mn-33-plot, cache=TRUE}
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "mg", title = "Manganese intake at 33 years")
+```
+
+```{r mn-18}
+test_data <- data[ ,102 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+```
+In comparison, the average intake at age 18 is quite lower __`r round(mean(test_data_na), 2)` mg/day__ and the plot looks similar to the previous plot.
+
+```{r mn-18-plot, cache=TRUE}
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "mg", title = "Manganese intake at 18 years")
+```
+
+```{r mn-15}
+test_data <- data[ ,91 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+```
+The average intake of Mn at age 15 is lower still at __`r round(mean(test_data_na), 2)` mg/day__. The plot looks reasonably good. There is one rather high intake value.
+
+```{r mn-15-plot, cache=TRUE}
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "mg", title = "Manganese intake at 15 years")
+```
+
+## Copper
+```{r cu-25}
+test_data <- data[ ,131 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+```
+The average intake recorded at age 25 __`r round(mean(test_data_na), 2)` mg/day__ is somewhat higher than in the data from the US.
+> Data from nationally representative U.S. surveys are available to
+estimate copper intakes (Appendix Tables C-15, C-16, D-2, E-3).
+The median intake of copper for women is approximately 1.0 to 1.1
+mg/day, whereas the median intake for men ranges from 1.2 to 1.6
+mg/day (Appendix Tables C-15 and D-2).
+
+It is also higher than the intake measured at age of 33 years (__`r mean(data[ ,145 , drop = TRUE], na.rm = TRUE)` mg/day__).
+
+## Caloric intake
+```{r kcal-18}
+test_data <- data[ ,95 , drop = TRUE]
+test_data_na <- test_data[!is.na(test_data)]
+row_names_na <- row_names
+row_names_na <- row_names_na[!is.na(test_data)]
+names(test_data_na) <- row_names_na
+```
+
+There is an obvious outlier at age 18: __`r round(max(test_data_na), 2)` kcal/day__. A few very low values were also observed (the minimum was __`r round(min(test_data_na), 2)` kcal/day__).
+
+```{r kcal-18-plot, cache=TRUE}
+g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth = TRUE, dist = TRUE, Method = "euclidean", rnames = TRUE)
+g1$`Scatter plot` + labs(x = "id", y = "kcal", title = "Caloric intake at 18 years")
+```
