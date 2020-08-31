@@ -38,5 +38,8 @@ df_long <- Reduce(function(...) merge(..., by = c("kood", "age"), all = FALSE),
                   list(df_amis_adapt_l, df_amis_maladapt_l, df_amis_CHL_l, df_wmaxkg_l)
                   )
 
+# center age at 15 years
+df_long$age_cent <- (df_long$age - 15)
+
 path <- here("mod_data", "df_for_lmer_test.csv")
 write_csv(df_long, path)
