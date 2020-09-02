@@ -28,6 +28,9 @@ data_food <- read_csv(path)
 # pull out single indicators
 df_amis_adapt <- data_food[, c(1:3, grep("Aimp_", colnames(data_food)))]
 df_amis_maladapt <- data_food[, c(1, grep("Mimp_", colnames(data_food)))]
+# subscales of impulsivity
+df_amis_fast <- data_food[, c(1, grep("Fast_", colnames(data_food)))]
+df_amis_excite <- data_food[, c(1, grep("Excite_", colnames(data_food)))]
 
 ################################################################################
 # minerals
@@ -42,6 +45,10 @@ df_potassium <- data[, c(1, grep("Potassium_", colnames(data)))]
 df_selenium <- data[, c(1, grep("Selenium_", colnames(data)))]
 df_sodium <- data[, c(1, grep("Sodium_", colnames(data)))]
 df_zink <- data[, c(1, grep("Zink_", colnames(data)))]
+
+# energy and body weight
+df_kcal <- data[, c(1, grep("kcalday_", colnames(data)))]
+df_BMI <- data[, c(1, grep("BMI_", colnames(data)))]
 
 # pull out single indicators, measurements are only for ages 18-33
 df_chrome <- data[, c(1, grep("Chrome_", colnames(data)))]
@@ -59,6 +66,10 @@ df_amis_adapt_l <- df_amis_adapt %>% reshape_l(id.vars = c("kood", "sugu", "koho
                                                value.name = "Aimp")
 df_amis_maladapt_l <- df_amis_maladapt %>% reshape_l(id.vars = c("kood"),
                                                      value.name = "Mimp")
+df_amis_fast_l <- df_amis_fast %>% reshape_l(id.vars = c("kood"),
+                                                     value.name = "Fast")
+df_amis_excite_l <- df_amis_excite %>% reshape_l(id.vars = c("kood"),
+                                             value.name = "Excite")
 df_wmaxkg_l <- df_wmaxkg %>% reshape_l(id.vars = c("kood"),
                                        value.name = "Wmaxkg")
 df_calcium_l <- df_calcium %>% reshape_l(id.vars = c("kood", "Calcium_9"),
@@ -81,12 +92,17 @@ df_sodium_l <- df_sodium %>% reshape_l(id.vars = c("kood", "Sodium_9"),
                                        value.name = "Sodium")
 df_zink_l <- df_zink %>% reshape_l(id.vars = c("kood", "Zink_9"),
                                      value.name = "Zink")
+df_kcal_l <- df_kcal %>% reshape_l(id.vars = c("kood"),
+                                       value.name = "kcal")
+df_BMI_l <- df_BMI %>% reshape_l(id.vars = c("kood"),
+                                   value.name = "BMI")
 ################################################################################
 # merge the separate long df-s together
 
 lst <- list(df_amis_adapt_l, df_amis_maladapt_l,df_wmaxkg_l, df_calcium_l,
             df_iodine_l, df_iron_l, df_magnesium_l, df_manganese_l, df_phosphorus_l,
-            df_potassium_l, df_selenium_l, df_sodium_l, df_zink_l)
+            df_potassium_l, df_selenium_l, df_sodium_l, df_zink_l, df_kcal_l, df_BMI_l,
+            df_amis_excite_l, df_amis_fast_l)
 
 df_long <- Reduce(function(...) merge(..., by = c("kood", "age"), all = FALSE),
                   lst

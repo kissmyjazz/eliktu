@@ -1,4 +1,4 @@
-# application of mixed-effect model to ELIKTU data
+# application of mixed-effect modelling to ELIKTU data
 
 library(here)
 library(tidyverse)
