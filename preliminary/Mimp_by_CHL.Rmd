@@ -1,5 +1,6 @@
 ---
 title: "ELIKTU longitudinal mixed-model approach to predicting impulsivity"
+date: "`r Sys.Date()`"
 author:
 - name: Denis Matrov
   affiliation: '1'
@@ -11,7 +12,7 @@ output:
   papaja::apa6_pdf: default
   pdf_document: default
 keywords:
-- outliers
+- mixed-models
 - eliktu
 wordcount: X
 floatsintext: no
@@ -118,8 +119,9 @@ Prediction results for cohorts 1 and 2 are illustrated in 2 following tables. Ch
 model_c1_1 <- lmer(Mimp ~ Aimp + age_cent + Wmaxkg + sugu + CHL_9 + CHL +
                             + (1 | kood),
                          REML = TRUE, data = kohort_1_df)
-model_c1_summary_1 <- tidy(model_c1_1, ddf = "Kenward-Roger")
-kableExtra::kable(model_c1_summary_1, booktabs=TRUE) %>% 
+model_c1_summary_1 <- tidy(model_c1_1, ddf = "Kenward-Roger",
+                              effects = "fixed")
+kableExtra::kable(model_c1_summary_1[, -1], booktabs=TRUE) %>% 
   kable_styling(latex_options="scale_down")
 ```
 
@@ -128,7 +130,8 @@ kableExtra::kable(model_c1_summary_1, booktabs=TRUE) %>%
 model_c2_1 <- lmer(Mimp ~ Aimp + age_cent + Wmaxkg + sugu + CHL +
                             + (1 | kood),
                          REML = TRUE, data = kohort_2_df)
-model_c2_summary_1 <- tidy(model_c2_1, ddf = "Kenward-Roger")
-kableExtra::kable(model_c2_summary_1, booktabs=TRUE) %>% 
+model_c2_summary_1 <- tidy(model_c2_1, ddf = "Kenward-Roger",
+                              effects = "fixed")
+kableExtra::kable(model_c2_summary_1[, -1], booktabs=TRUE) %>% 
   kable_styling(latex_options="scale_down")
 ```

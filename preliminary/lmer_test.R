@@ -46,7 +46,7 @@ g2
 
 # model 1 for cohort 1
 model_c1_1 <- lmer(Mimp ~ Aimp + age_cent + Wmaxkg + sugu + CHL_9 + CHL +
-                            + (1 | kood),
+                     (1 | kood),
                           REML = TRUE, data = kohort_1_df)
 model_c1_summary_1 <- summary(model_c1_1, ddf = "Kenward-Roger")
 model_c1_summary_1
@@ -54,7 +54,7 @@ model_c1_summary_1
 
 # model for cohort 2
 model_c2_1 <- lmer(Mimp ~ Aimp + age_cent + Wmaxkg + sugu + CHL +
-                     + (1 | kood),
+                     (1 | kood),
                    REML = TRUE, data = kohort_2_df)
 model_c2_summary_1 <- summary(model_c2_1, ddf = "Kenward-Roger")
 model_c2_summary_1
