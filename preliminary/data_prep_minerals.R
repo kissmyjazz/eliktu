@@ -110,9 +110,12 @@ df_long <- Reduce(function(...) merge(..., by = c("kood", "age"), all = FALSE),
 
 
 ################################################################################
-# center age at 15 years
-df_long$age_cent <- (df_long$age - 15)
-df_long$sugu <- factor(df_long$sugu, levels = c(1, 2), labels = c("man", "woman"))
+# center age at 18 years for both cohorts
+df_long$age_cent <- (df_long$age - 18)
+
+# change male's and female's codes to 0 and 1 respectively
+df_long$sugu <- (df_long$sugu - 1)
+df_long$sugu <- factor(df_long$sugu, levels = c(0, 1), labels = c("male", "female"))
 
 ################################################################################
 path <- here("mod_data", "df_for_lmer_minerals.csv")

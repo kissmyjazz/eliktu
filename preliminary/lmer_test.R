@@ -10,7 +10,8 @@ old <- theme_set(theme_bw())
 
 path <- here("mod_data", "df_for_lmer_test.csv")
 data <- read_csv(path)
-data$sugu <- factor(data$sugu, levels = c(1, 2), labels = c("man", "woman"))
+df_long$sugu <- (df_long$sugu - 1)
+df_long$sugu <- factor(df_long$sugu, levels = c(0, 1), labels = c("male", "female"))
 
 # divide data by cohort because cohort 2 does not have CHL_9 scores
 # cohort 1 does not have impulsivity scores for age 33, hence I filter data for this age out
