@@ -25,8 +25,16 @@ df_amis_l <- df_amis %>% pivot_longer(!kood, names_to = c(".value", "age"),
 
 ################################################################################
 # food categories
+# Retinol_eqv_18 for cohort 1 is combined with VitA_18 for cohort 2
+
 path <- here("mod_data", "toitumine_wide_reduced.csv")
+path1 <- here("mod_data", "AMIS_toitumine_wide.csv")
+
 df_food <- read_csv(path) %>% dplyr::select(-ends_with("_9"))
+df_food_a <- read_csv(path1) %>% dplyr::select(kood, Retinol_eqv_18)
+df_food <- df_food %>% left_join(df_food_a, by="kood") %>%
+  dplyr::mutate(VitA_18 = dplyr::coalesce(VitA_18, Retinol_eqv_18),
+                Retinol_eqv_18 = NULL)
 
 # transform into long format
 df_food_l <- df_food %>% pivot_longer(!kood, names_to = c(".value", "age"),
