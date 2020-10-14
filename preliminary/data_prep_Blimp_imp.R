@@ -21,6 +21,10 @@ df_cohort2 <- df %>% dplyr::filter(kohort == 2) %>% dplyr::select(-kohort) %>%
 df_joint_AMIS <- df %>% dplyr::mutate(sugu = as_numeric_factor(sugu)) %>%
   dplyr::select(1:5, 16:17, 45:68)
 
+# the rest of the data to impute without AMIS items
+df_joint_food <- df %>% dplyr::mutate(sugu = as_numeric_factor(sugu)) %>%
+  dplyr::select(-c(45:68))
+
 names <- colnames(df_cohort1)
 names2 <- miceadds::VariableNames2String(names, breaks = 1000)
 path_text <- here("mod_data", "colnames.txt")
@@ -36,3 +40,6 @@ write_csv(df_cohort2, path2, na = "-999", col_names = FALSE)
 
 path3 <- here("mod_data", "df_for_imputation_blimp_joint_AMIS.csv")
 write_csv(df_joint_AMIS, path3, na = "-999", col_names = FALSE)
+
+path4 <- here("mod_data", "df_for_imputation_blimp_joint_food.csv")
+write_csv(df_joint_food, path4, na = "-999", col_names = FALSE)

@@ -29,7 +29,7 @@ saveRDS(imp_cohort1, path_imp)
 # cohort 2
 path_imp <- here("imputed_data", "mice_imp_cohort2.rds")
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = "2l.pmm", maxit = 0)
-pred_matrix <- imp_cohort1$predictorMatrix
+pred_matrix <- imp_cohort2$predictorMatrix
 pred_matrix[, c("kood")] <- pred_matrix[, c("kood")] * -2
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = "2l.pmm", m = 100,
                     maxit = 100,
