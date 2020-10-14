@@ -1,5 +1,6 @@
 library(tidyverse)
 library(lme4)
+library(blme)
 library(here)
 library(mice)
 library(miceadds)
@@ -22,7 +23,7 @@ imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = "2l.pmm", maxit = 0)
 pred_matrix <- imp_cohort1$predictorMatrix
 pred_matrix[, c("kood")] <- pred_matrix[, c("kood")] * -2
 imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = "2l.pmm", m = 100,
-                    maxit = 100,
+                    maxit = 100, blme_use = TRUE,
                     predictorMatrix = pred_matrix, printFlag = TRUE)
 saveRDS(imp_cohort1, path_imp)
 ################################################################################
@@ -32,7 +33,7 @@ imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = "2l.pmm", maxit = 0)
 pred_matrix <- imp_cohort2$predictorMatrix
 pred_matrix[, c("kood")] <- pred_matrix[, c("kood")] * -2
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = "2l.pmm", m = 100,
-                    maxit = 100,
+                    maxit = 100, blme_use = TRUE,
                     predictorMatrix = pred_matrix, printFlag = TRUE)
 saveRDS(imp_cohort2, path_imp)
 ################################################################################
