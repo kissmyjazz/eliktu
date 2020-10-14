@@ -17,7 +17,9 @@ df_cohort2 <- df %>% dplyr::filter(kohort == 2) %>% dplyr::select(-kohort) %>%
   dplyr::mutate(sugu = as_numeric_factor(sugu))
 
 # to employ impute by group feature in Blimp
-df_joint <- df %>% dplyr::mutate(sugu = as_numeric_factor(sugu))
+# I selected age, gender, Wmaxkg, kcal, BMI, and AMIS items for initial imputation
+df_joint_AMIS <- df %>% dplyr::mutate(sugu = as_numeric_factor(sugu)) %>%
+  dplyr::select(1:5, 16:17, 45:68)
 
 names <- colnames(df_cohort1)
 names2 <- miceadds::VariableNames2String(names, breaks = 1000)
@@ -32,5 +34,5 @@ path2 <- here("mod_data", "df_for_imputation_blimp_c2.csv")
 write_csv(df_cohort1, path1, na = "-999", col_names = FALSE)
 write_csv(df_cohort2, path2, na = "-999", col_names = FALSE)
 
-path3 <- here("mod_data", "df_for_imputation_blimp_joint.csv")
-write_csv(df_joint, path3, na = "-999", col_names = FALSE)
+path3 <- here("mod_data", "df_for_imputation_blimp_joint_AMIS.csv")
+write_csv(df_joint_AMIS, path3, na = "-999", col_names = FALSE)
