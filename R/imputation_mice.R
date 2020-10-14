@@ -13,7 +13,7 @@ df_cohort2 <- df %>% dplyr::filter(kohort == 2) %>% dplyr::select(-kohort)
 # make a separate block for AMIS questionnaire items
 block_AMIS <- mice::make.blocks(df_cohort1[, c(1:3, 44:67)], partition = "collect")
 block_food <- mice::make.blocks(df_cohort1[, -c(44:67)], partition = "collect")
-blocks = c(block_AMIS, block_food)
+blocks = c(block_food, block_AMIS)
 ################################################################################
 # imputation
 # cohort 1
