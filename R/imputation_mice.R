@@ -45,7 +45,7 @@ saveRDS(imp_cohort1, path_imp)
 path_imp <- here("imputed_data", "mice_imp_cohort2.rds")
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = meth, m = 100,
                     maxit = 40, 
-                    predictorMatrix = mod_matrix, printFlag = TRUE, seed == 1984)
+                    predictorMatrix = mod_matrix, printFlag = TRUE, seed = 1984)
 plot(imp_cohort2)
 saveRDS(imp_cohort2, path_imp)
 ################################################################################
