@@ -38,3 +38,24 @@ write_delim(df_cohort1_age25, path_cohort1_age25, na = "999", col_names = FALSE)
 write_delim(df_cohort2_age18, path_cohort2_age18, na = "999", col_names = FALSE)
 write_delim(df_cohort2_age25, path_cohort2_age25, na = "999", col_names = FALSE)
 write_delim(df_cohort2_age33, path_cohort2_age33, na = "999", col_names = FALSE)
+
+################################################################################
+# cohorts 1 & 2
+df_cohort1 <- df %>% dplyr::filter(kohort == 1) %>% 
+  dplyr::select(AMIS1:AMIS24)
+df_cohort2 <- df %>% dplyr::filter(kohort == 2) %>% 
+  dplyr::select(AMIS1:AMIS24)
+
+path_cohort1 <- here("mod_data", "df_for_factor_c1.dat")
+path_cohort2 <- here("mod_data", "df_for_factor_c2.dat")
+
+write_delim(df_cohort1, path_cohort1, na = "999", col_names = FALSE)
+write_delim(df_cohort2, path_cohort2, na = "999", col_names = FALSE)
+################################################################################
+# cohorts together
+df_both_cohorts <- df %>% dplyr::select(AMIS1:AMIS24)
+
+path_both_cohorts <- here("mod_data", "df_for_factor_all.dat")
+
+write_delim(df_both_cohorts, path_both_cohorts, na = "999", col_names = FALSE)
+
