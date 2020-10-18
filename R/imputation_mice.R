@@ -36,7 +36,7 @@ meth <- imp_cohort1$method
 # use "2l.norm" for rest of the data and "2l.pmm" for AMIS scale items
 meth[4:43] <- "2l.pan"
 imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = meth, m = 100,
-                    maxit = 40,
+                    maxit = 100,
                     predictorMatrix = mod_matrix, printFlag = TRUE, seed = 1984)
 plot(imp_cohort1)
 saveRDS(imp_cohort1, path_imp)
@@ -44,7 +44,7 @@ saveRDS(imp_cohort1, path_imp)
 # cohort 2
 path_imp <- here("imputed_data", "mice_imp_cohort2.rds")
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = meth, m = 100,
-                    maxit = 40, 
+                    maxit = 100, 
                     predictorMatrix = mod_matrix, printFlag = TRUE, seed = 1984)
 plot(imp_cohort2)
 saveRDS(imp_cohort2, path_imp)
