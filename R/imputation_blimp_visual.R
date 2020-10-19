@@ -76,10 +76,10 @@ df_1 %>% filter(.imp <= 5) %>% select(.imp, AMIS1) %>% group_by(.imp) %>%
   nest() %>% mutate(prop = data %>% map(~{table(.x) %>% prop.table() %>% 
       as.data.frame()})) %>% unnest(prop) %>% 
   select(.imp, response = .x, proportion = Freq) %>% spread(response, proportion) %>% 
-  head(11) %>% round(2)
+  head() %>% round(2)
 
 df_1 %>% filter(.imp <= 5) %>% select(.imp, AMIS8) %>% group_by(.imp) %>% 
   nest() %>% mutate(prop = data %>% map(~{table(.x) %>% prop.table() %>% 
       as.data.frame()})) %>% unnest(prop) %>% 
   select(.imp, response = .x, proportion = Freq) %>% spread(response, proportion) %>% 
-  head(11) %>% round(2)
+  head() %>% round(2)
