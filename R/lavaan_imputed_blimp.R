@@ -64,18 +64,18 @@ lat_aImp =~ E_2 + F_3 + E_6p + F_7p + E_10 + F_11 + E_14 + F_15 + E_18 + F_19 +
 lat_mImp =~ T_1 + D_4 + T_5 + T_9 + D_12 + T_13 + D_16 + T_17 + D_20 + T_21p + 
             D_24'
 ################################################################################
-cfa_fit <- cfa.mi(lav_mod, data = implist_lav_c1, 
+cfa_fit_c1 <- cfa.mi(lav_mod, data = implist_lav_c1, 
                   estimator="WLSMV", ordered = TRUE, 
                   parameterization = "theta", group = "age_f")
 
-mod_thresh_c1 <- measEq.syntax(configural.model = cfa_fit,
+mod_thresh_c1 <- measEq.syntax(configural.model = cfa_fit_c1,
                     ID.fac = "UL", ID.cat = "millsap.tein.2004", group = "age_f",
                     group.equal=c("thresholds"))
-mod_metric_c1 <- measEq.syntax(configural.model = cfa_fit,
+mod_metric_c1 <- measEq.syntax(configural.model = cfa_fit_c1,
                                ID.fac = "UL", ID.cat = "millsap.tein.2004", 
                                group = "age_f",
                                group.equal=c("thresholds", "loadings"))
-mod_scalar_c1 <- measEq.syntax(configural.model = cfa_fit,
+mod_scalar_c1 <- measEq.syntax(configural.model = cfa_fit_c1,
                                ID.fac = "UL", ID.cat = "millsap.tein.2004", 
                                group = "age_f",
                                group.equal=c("thresholds", "loadings", "intercepts"))
