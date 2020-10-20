@@ -78,5 +78,21 @@ mod_metric_c1 <- measEq.syntax(configural.model = cfa_fit,
 mod_scalar_c1 <- measEq.syntax(configural.model = cfa_fit,
                                ID.fac = "UL", ID.cat = "millsap.tein.2004", 
                                group = "age_f",
-                               group.equal=c("thresholds", "loadings","intercepts"))
+                               group.equal=c("thresholds", "loadings", "intercepts"))
+################################################################################
+cfa_fit_c2 <- cfa.mi(lav_mod, data = implist_lav_c2, 
+                  estimator="WLSMV", ordered = TRUE, 
+                  parameterization = "theta", group = "age_f")
+
+mod_thresh_c2 <- measEq.syntax(configural.model = cfa_fit_c2,
+                               ID.fac = "UL", ID.cat = "millsap.tein.2004", group = "age_f",
+                               group.equal=c("thresholds"))
+mod_metric_c2 <- measEq.syntax(configural.model = cfa_fit_c2,
+                               ID.fac = "UL", ID.cat = "millsap.tein.2004", 
+                               group = "age_f",
+                               group.equal=c("thresholds", "loadings"))
+mod_scalar_c2 <- measEq.syntax(configural.model = cfa_fit_c2,
+                               ID.fac = "UL", ID.cat = "millsap.tein.2004", 
+                               group = "age_f",
+                               group.equal=c("thresholds", "loadings", "intercepts"))
 ################################################################################
