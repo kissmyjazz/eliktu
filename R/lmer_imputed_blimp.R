@@ -11,7 +11,6 @@ options(scipen=999)
 old <- theme_set(theme_bw())
 
 path <- here("mod_data", "df_for_imputation.csv")
-
 df <- read_csv(path)
 names <- colnames(df) 
 names_food <- c(".imp", names[1:44])
@@ -130,5 +129,4 @@ l_1_m_c2_int <- with(implist_c2, lmer(mImp ~ sugu + Wmaxkg + Calcium + Iodine + 
                                         VitB1 + VitB12 + VitB2 + VitB6 + VitC + VitD + VitE + Alco + 
                                         aImp + age_f + (1 | kood), REML = TRUE))
 results_l_1_m_c2_int <- testEstimates(l_1_m_c2_int)
-################################################################################
 ################################################################################
