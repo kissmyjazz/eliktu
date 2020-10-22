@@ -41,7 +41,8 @@ df_blimp <- df_blimp %>% group_by(.imp) %>% mutate(.id = row_number()) %>%
                                labels = c("15 years", "18 years", "25 years", 
                                           "33 years"))) %>% 
   group_by(.imp, kohort) %>% 
-  dplyr::mutate_at(c(6:45, 47:48), ~(scale(.x, scale = TRUE) %>% as.vector()))
+  dplyr::mutate_at(c(6:45, 47:48), ~(scale(.x, scale = TRUE) %>% as.vector())) %>% 
+  dplyr::ungroup()
 
 # saved the data
 # path <- here("imputed_data", "blimp", "scaled_joined_df.rds")
