@@ -29,7 +29,7 @@ blocks = c(block_food, block_AMIS)
 ################################################################################
 # imputation
 # cohort 1
-path_imp <- here("imputed_data", "mice_imp_cohort1.rds")
+path_imp <- here("imputed_data", "mice_imp_cohort1.rds_filt")
 imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = "2l.pmm", maxit = 0)
 pred_matrix <- imp_cohort1$predictorMatrix
 pred_matrix[, c("kood")] <- pred_matrix[, c("kood")] * -2
@@ -48,7 +48,7 @@ plot(imp_cohort1)
 saveRDS(imp_cohort1, path_imp)
 ################################################################################
 # cohort 2
-path_imp <- here("imputed_data", "mice_imp_cohort2.rds")
+path_imp <- here("imputed_data", "mice_imp_cohort2_filt.rds")
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = meth, m = 100,
                     maxit = 40, 
                     predictorMatrix = mod_matrix, printFlag = TRUE, seed = 1984)
