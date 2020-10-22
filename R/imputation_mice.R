@@ -29,18 +29,19 @@ blocks = c(block_food, block_AMIS)
 ################################################################################
 # imputation
 # cohort 1
-path_imp <- here("imputed_data", "mice_imp_cohort1.rds_filt")
+path_imp <- here("imputed_data", "mice", "mice_imp_cohort1.rds_filt")
 imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = "2l.pmm", maxit = 0)
 pred_matrix <- imp_cohort1$predictorMatrix
 pred_matrix[, c("kood")] <- pred_matrix[, c("kood")] * -2
 
 # write predictor matrix to hard drive to modify it in spreadsheet software
-path <- here("imputed_data", "mice_pred_matrix.csv")
-# write_csv(as.data.frame(pred_matrix), path)
+path <- here("imputed_data", "mice", "mice_pred_matrix.csv")
+#  write_csv(as.data.frame(pred_matrix), path)
 mod_matrix <- read_csv2(path) %>% as.matrix()
 dimnames(mod_matrix) <- dimnames(pred_matrix) 
 meth <- imp_cohort1$method
-# meth[4:43] <- "2l.pan"
+# use `2l.pan` method for continuous values and `2l.pmm` for AMIS scale items
+meth[4:43] <- "2l.pan"
 imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = meth, m = 100,
                     maxit = 40,
                     predictorMatrix = mod_matrix, printFlag = TRUE, seed = 1984)
@@ -48,7 +49,7 @@ plot(imp_cohort1)
 saveRDS(imp_cohort1, path_imp)
 ################################################################################
 # cohort 2
-path_imp <- here("imputed_data", "mice_imp_cohort2_filt.rds")
+path_imp <- here("imputed_data", "mice", "mice_imp_cohort2_filt.rds")
 imp_cohort2 <- mice(df_cohort2, blocks = blocks, method = meth, m = 100,
                     maxit = 40, 
                     predictorMatrix = mod_matrix, printFlag = TRUE, seed = 1984)
