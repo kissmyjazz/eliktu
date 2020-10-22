@@ -20,5 +20,5 @@ df_c2_filt <- dplyr::filter(df_c2, !rowSums(is.na(df_c2)) >= 64)
 path_c1 <- here("mod_data", "df_for_imputation_blimp_c1f.csv")
 path_c2 <- here("mod_data", "df_for_imputation_blimp_c2f.csv")
 
-write_csv(df_c1_filt, path_c1)
-write_csv(df_c2_filt, path_c2)
+write_csv(df_c1_filt, path_c1, na = "-999", col_names = FALSE)
+write_csv(df_c2_filt, path_c2, na = "-999", col_names = FALSE)
