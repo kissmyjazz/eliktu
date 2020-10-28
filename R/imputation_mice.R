@@ -29,7 +29,7 @@ blocks = c(block_food, block_AMIS)
 ################################################################################
 # imputation
 # cohort 1
-path_imp <- here("imputed_data", "mice", "mice_imp_cohort1.rds_filt")
+path_imp <- here("imputed_data", "mice", "mice_imp_cohort1_filt.rds")
 imp_cohort1 <- mice(df_cohort1, blocks = blocks, method = "2l.pmm", maxit = 0)
 pred_matrix <- imp_cohort1$predictorMatrix
 pred_matrix[, c("kood")] <- pred_matrix[, c("kood")] * -2
