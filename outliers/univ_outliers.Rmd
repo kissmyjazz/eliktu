@@ -428,4 +428,3 @@ g1 <- UnivariateOutlierDetection(test_data_na, cutoff = .99, dens = FALSE, depth
 g1$`Scatter plot` + labs(x = "id", y = "value", title = "")
 ```
 
-blah
