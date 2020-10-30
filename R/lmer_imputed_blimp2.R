@@ -49,7 +49,10 @@ df_blimp <- df_blimp %>% group_by(.imp) %>% mutate(.id = row_number()) %>%
                 kood = factor(kood), age_cent = (age - 18), 
                 age_f = factor(age, levels = c(15, 18, 25, 33), 
                                labels = c("15 years", "18 years", "25 years", 
-                                          "33 years")))
+                                          "33 years"))) %>% 
+  group_by(.imp) %>% 
+  dplyr::mutate_at(c("aImp", "mImp"), ~(scale(.x, scale = TRUE) %>% as.vector())) %>% 
+  dplyr::ungroup()
 
 # saved the data
 # path <- here("imputed_data", "blimp", "scaled_joined_df2.rds")
@@ -78,244 +81,6 @@ implist_c2 <- as.mitml.list(split(df_blimp0_c2 , df_blimp0_c2$.imp))
 names <- names(df_blimp0_c1)
 implist_c_both <- as.mitml.list(split(df_blimp0 , df_blimp0$.imp))
 
-# make formulas
-fmla_aImp <- formula(paste("aImp ~ ", 
-                           paste(names[-c(1:3, 16, 18, 20, 45, 48)], collapse="+"), 
-                           " + (1|kood)"))
-fmla_aImp_slope <- formula(paste("aImp ~ ", 
-                           paste(names[-c(1:3, 16, 18, 20, 45, 48)], collapse="+"), 
-                           " + (age_cent|kood)"))
-fmla_aImp_slope_interac <- formula(paste("aImp ~ (", 
-                                 paste(names[-c(1:3, 16, 18, 20, 45, 47, 48)],
-                                 collapse="+"), 
-                                 ") * age_cent + (age_cent|kood)"))
-fmla_mImp <- formula(paste("mImp ~ ", 
-                           paste(names[-c(1:3, 16, 18, 20, 46, 48)], collapse="+"),
-                           " + (1|kood)"))
-fmla_mImp_slope <- formula(paste("mImp ~ ", 
-                                 paste(names[-c(1:3, 16, 18, 20, 46, 48)], collapse="+"),
-                                 " + (age_cent|kood)"))
-################################################################################
-# cohort 1; Adaptive impulsivity
-# Zink included
-l_1_a_c1_Zink <- with(implist_c1, lmer(aImp ~ sugu + Wmaxkg + 
-                                         Zink +  mImp + age_f + (1 | kood), REML = TRUE))
-results_l_1_a_c1_Zink <- testEstimates(l_1_a_c1_Zink)
-
-# full model
-l_1_a_c1_int <- with(implist_c1, lmer(aImp ~ sugu + Wmaxkg + Calcium + Iodine + Iron + Magnesium + 
-                                        Manganese + Phosphorus + Potassium + Selenium + Sodium + 
-                                        Zink + BMI + Cerealprod + Eggs + Fatsg + 
-                                        Fish + Folate + FruitsBerries + HDL + HOMA + LDL + Lipid + 
-                                        Meat + Milk + Niacin + Protein + SugSweets + Veget + VitA + 
-                                        VitB1 + VitB12 + VitB2 + VitB6 + VitC + VitD + VitE + Alco + 
-                                        mImp + age_cent + (1 | kood), REML = TRUE))
-results_l_1_a_c1_int <- testEstimates(l_1_a_c1_int)
-
-# full model with age_interation
-l_1_a_c1_slope_interac <- with(implist_c1, lmer(aImp ~ (sugu + Wmaxkg + Calcium + Iodine + Iron + Magnesium + 
-                                        Manganese + Phosphorus + Potassium + Selenium + Sodium + 
-                                        Zink + BMI + Cerealprod + Eggs + Fatsg + 
-                                        Fish + Folate + FruitsBerries + HDL + HOMA + LDL + Lipid + 
-                                        Meat + Milk + Niacin + Protein + SugSweets + Veget + VitA + 
-                                        VitB1 + VitB12 + VitB2 + VitB6 + VitC + VitD + VitE + Alco + 
-                                        mImp) * age_cent  + (age_cent | kood), REML = TRUE))
-results_l_1_a_c1_slope_interac <- testEstimates(l_1_a_c1_slope_interac)
-
-# VitB6 included
-l_1_a_c1_VitB6 <- with(implist_c1, lmer(aImp ~ sugu + Sodium + BMI +
-                                          VitB6 +  mImp + age_f + (1 | kood), REML = TRUE))
-results_l_1_a_c1_VitB6 <- testEstimates(l_1_a_c1_VitB6)
-################################################################################
-# cohort 2; Adaptive impulsivity
-# full model
-l_1_a_c2_int <- with(implist_c2, lmer(aImp ~ sugu + Wmaxkg + Calcium + Iodine + Iron + Magnesium + 
-                                        Manganese + Phosphorus + Potassium + Selenium + Sodium + 
-                                        Zink + BMI + Cerealprod + Eggs + Fatsg + 
-                                        Fish + Folate + FruitsBerries + HDL + HOMA + LDL + Lipid + 
-                                        Meat + Milk + Niacin + Protein + SugSweets + Veget + VitA + 
-                                        VitB1 + VitB12 + VitB2 + VitB6 + VitC + VitD + VitE + Alco + 
-                                        mImp + age_cent + (1 | kood), REML = TRUE))
-results_l_1_a_c2_int <- testEstimates(l_1_a_c2_int)
-################################################################################
-# cohort 1; Maladaptive impulsivity
-# full model
-l_1_m_c1_int <- with(implist_c1, lmer(mImp ~ sugu + Wmaxkg + Calcium + Iodine + Iron + Magnesium + 
-                                        Manganese + Phosphorus + Potassium + Selenium + Sodium + 
-                                        Zink + BMI + Cerealprod + Eggs + Fatsg + 
-                                        Fish + Folate + FruitsBerries + HDL + HOMA + LDL + Lipid + 
-                                        Meat + Milk + Niacin + Protein + SugSweets + Veget + VitA + 
-                                        VitB1 + VitB12 + VitB2 + VitB6 + VitC + VitD + VitE + Alco + 
-                                        aImp + age_cent + (1 | kood), REML = TRUE))
-results_l_1_m_c1_int <- testEstimates(l_1_m_c1_int)
-################################################################################
-# cohort 2; Maladaptive impulsivity
-# full model
-l_1_m_c2_int <- with(implist_c2, lmer(mImp ~ sugu + Wmaxkg + Calcium + Iodine + Iron + Magnesium + 
-                                        Manganese + Phosphorus + Potassium + Selenium + Sodium + 
-                                        Zink + BMI + Cerealprod + Eggs + Fatsg + 
-                                        Fish + Folate + FruitsBerries + HDL + HOMA + LDL + Lipid + 
-                                        Meat + Milk + Niacin + Protein + SugSweets + Veget + VitA + 
-                                        VitB1 + VitB12 + VitB2 + VitB6 + VitC + VitD + VitE + Alco + 
-                                        aImp + age_cent + (1 | kood), REML = TRUE))
-results_l_1_m_c2_int <- testEstimates(l_1_m_c2_int)
-################################################################################
-# using merTools
-# aImp cohort 1
-# full model 
-lmer_1_a_c1_int <- lmerModList(fmla_aImp, data = implist_c1, REML = TRUE)
-summary(lmer_1_a_c1_int)
-
-lmer_1_a_c1_slope <- lmerModList(fmla_aImp_slope, data = implist_c1, REML = TRUE)
-summary(lmer_1_a_c1_slope)
-
-lmer_1_a_c1_slope_interac <- lmerModList(fmla_aImp_slope_interac, 
-                                         data = implist_c1, REML = TRUE)
-summary(lmer_1_a_c1_slope_interac)
-fixef_1_a_c1_slope <- modelFixedEff(lmer_1_a_c1_slope)
-fixef_1_a_c1_slope <- fixef_1_a_c1_slope[order(abs(fixef_1_a_c1_slope$statistic),
-                                               decreasing = TRUE), ]
-# VitA, Lipid, VitB2, Iron, Niacin, Eggs, VitB1, Fatsg, Zink, Fish, Meat, 
-# Iodine, Veget, VitB12, Manganese, Sodium, Alco, Magnesium, Phosphorus, HDL,
-# Potassium, VitC, Milk, Calcium, VitE, Selenium, LDL, FruitsBerries, Folate,
-# Protein, Cerealprod, SugSweets, HOMA, BMI, Wmaxkg
-# are excluded
-fmla_aImp_slope_3 <- formula(paste("aImp ~ sugu +  
-    VitB6 + mImp + age_cent + VitD +
-    (age_cent | kood)"))
-lmer_2_a_c1_slope <- lmerModList(fmla_aImp_slope_3, data = implist_c1, REML = TRUE)
-summary(lmer_2_a_c1_slope)
-fixef_2_a_c1_slope <- modelFixedEff(lmer_2_a_c1_slope)
-fixef_2_a_c1_slope <- fixef_2_a_c1_slope[order(abs(fixef_2_a_c1_slope$statistic),
-                                               decreasing = TRUE), ]
-print(fixef_2_a_c1_slope)
-# new AIC = 9040.8
-
-# refit with the final formula to get the p values
-l_2_a_c1_slope <- with(implist_c1, lmer(aImp ~ sugu + VitB6 + mImp + age_cent + VitD +
-                                          (age_cent | kood), REML = TRUE))
-results_l_2_a_c1_slope <- testEstimates(l_2_a_c1_slope)
-df_l_2_a_c1_slope <- as.data.frame(results_l_2_a_c1_slope$estimates)
-path_2_a_c1 <- here("summary_data", "lmer_results", "aImp_c1.rds")
-saveRDS(df_l_2_a_c1_slope, path_2_a_c1)
-
-################################################################################
-# aImp cohort 2
-# full model 
-lmer_1_a_c2_int <- lmerModList(fmla_aImp, data = implist_c2, REML = TRUE)
-summary(lmer_1_a_c2_int)
-
-lmer_1_a_c2_slope <- lmerModList(fmla_aImp_slope, data = implist_c2, REML = TRUE)
-summary(lmer_1_a_c2_slope)
-
-lmer_1_a_c2_slope_interac <- lmerModList(fmla_aImp_slope_interac, data = implist_c2, REML = TRUE)
-summary(lmer_1_a_c2_slope_interac)
-
-fixef_1_a_c2_slope <- modelFixedEff(lmer_1_a_c2_slope)
-fixef_1_a_c2_slope <- fixef_1_a_c2_slope[order(abs(fixef_1_a_c2_slope$statistic),
-                                               decreasing = TRUE), ]
-
-# Iron, SugSweets, LDL, VitC, HOMA, VitA, VitB12, Calcium, Folate, Lipid, HDL,
-# VitB1, Niacin, Fish, Veget, Iodine, Selenium, Sodium, FruitsBerries, VitD, 
-# VitE, Eggs, Potassium, Cerealprod, Fatsg, Wmaxkg, BMI, Phosphorus, VitB2, 
-# Milk, Protein, Meat, Manganese, VitB6, Magnesium
-# are excluded
-fmla_aImp_slope_2 <- formula(paste("aImp ~ sugu + 
-    Zink + Magnesium + mImp + age_cent + Alco + Alco:sugu + 
-    (age_cent | kood)"))
-lmer_2_a_c2_slope <- lmerModList(fmla_aImp_slope_2, data = implist_c2, REML = TRUE)
-summary(lmer_2_a_c2_slope)
-fixef_2_a_c2_slope <- modelFixedEff(lmer_2_a_c2_slope)
-fixef_2_a_c2_slope <- fixef_2_a_c2_slope[order(abs(fixef_2_a_c2_slope$statistic),
-                                               decreasing = TRUE), ]
-print(fixef_2_a_c2_slope)
-# new AIC = 10120.6
-
-# refit with the final formula to get the p values
-l_2_a_c2_slope <- with(implist_c2, lmer(aImp ~ sugu + Zink + Magnesium + mImp +
-                                          age_cent + Alco + Alco:sugu + 
-                                          (age_cent | kood), REML = TRUE))
-results_l_2_a_c2_slope <- testEstimates(l_2_a_c2_slope)
-df_l_2_a_c2_slope <- as.data.frame(results_l_2_a_c2_slope$estimates)
-# path_2_a_c2 <- here("summary_data", "lmer_results", "aImp_c2.rds")
-# saveRDS(df_l_2_a_c2_slope, path_2_a_c2)
-
-################################################################################
-
-# mImp cohort 1
-# full model 
-lmer_1_m_c1_int <- lmerModList(fmla_mImp, data = implist_c1, REML = TRUE)
-summary(lmer_1_m_c1_int)
-
-lmer_1_m_c1_slope <- lmerModList(fmla_mImp_slope, data = implist_c1, REML = TRUE)
-summary(lmer_1_m_c1_slope)
-
-fixef_1_m_c1_slope <- modelFixedEff(lmer_1_m_c1_slope)
-fixef_1_m_c1_slope <- fixef_1_m_c1_slope[order(abs(fixef_1_m_c1_slope$statistic),
-                                               decreasing = TRUE), ]
-
-# HOMA, Protein, Milk, Fish, VitB6, Lipid, Fatsg, Iron, VitB12, Sodium,
-# Magnesium, VitE, FruitsBerries, BMI, SugSweets, Zink, VitD, Potassium,
-# Manganese, Niacin, Cerealprod, Eggs, Phosphorus, LDL, VitB1, Calcium, 
-# VitB2, VitA, Folate, VitC, Alco
-# are excluded
-fmla_mImp_slope_3 <- formula(paste("mImp ~ sugu + Iodine + 
-    Selenium +  Meat + Veget + Wmaxkg + 
-    aImp + age_cent + (age_cent | kood)"))
-lmer_2_m_c1_slope <- lmerModList(fmla_mImp_slope_3, data = implist_c1, REML = TRUE)
-summary(lmer_2_m_c1_slope)
-fixef_2_m_c1_slope <- modelFixedEff(lmer_2_m_c1_slope)
-fixef_2_m_c1_slope <- fixef_2_m_c1_slope[order(abs(fixef_2_m_c1_slope$statistic),
-                                               decreasing = TRUE), ]
-print(fixef_2_m_c1_slope)
-# new AIC = 9086.6
-
-# refit with the final formula to get the p values
-l_2_m_c1_slope <- with(implist_c1, lmer(mImp ~ sugu + Iodine + 
-                                        Selenium +  Meat + Veget + Wmaxkg + 
-                                        aImp + age_cent + (age_cent | kood), REML = TRUE))
-results_l_2_m_c1_slope <- testEstimates(l_2_m_c1_slope)
-df_l_2_m_c1_slope <- as.data.frame(results_l_2_m_c1_slope$estimates)
-path_2_m_c1 <- here("summary_data", "lmer_results", "mImp_c1.rds")
-saveRDS(df_l_2_m_c1_slope, path_2_m_c1)
-################################################################################
-# mImp cohort 2
-# full model 
-lmer_1_m_c2_int <- lmerModList(fmla_mImp, data = implist_c2, REML = TRUE)
-summary(lmer_1_m_c2_int)
-
-lmer_1_m_c2_slope <- lmerModList(fmla_mImp_slope, data = implist_c2, REML = TRUE)
-summary(lmer_1_m_c2_slope)
-
-fixef_1_m_c2_slope <- modelFixedEff(lmer_1_m_c2_slope)
-fixef_1_m_c2_slope <- fixef_1_m_c2_slope[order(abs(fixef_1_m_c2_slope$statistic),
-                                               decreasing = TRUE), ]
-
-# lipid, VitB6, Iodine, VitB1, VitA, HDL, VitB2, Fatsg, Calcium, SugSweets,
-# Potassium, Veget, LDL, Magnesium, Phosphorus, Protein, Niacin, Manganese,
-# Eggs, VitD, VitB12, Iron, VitE, Meat, Milk, Cerealprod, HOMA, FruitsBerries,
-# Alco, BMI, Sodium, Fish
-# are excluded
-fmla_mImp_slope_2 <- formula(paste("mImp ~ sugu + Wmaxkg + 
-  Selenium + Folate + Zink + aImp + age_cent + sugu:Zink + 
-  (age_cent | kood)"))
-lmer_2_m_c2_slope <- lmerModList(fmla_mImp_slope_2, data = implist_c2, REML = TRUE)
-summary(lmer_2_m_c2_slope)
-fixef_2_m_c2_slope <- modelFixedEff(lmer_2_m_c2_slope)
-fixef_2_m_c2_slope <- fixef_2_m_c2_slope[order(abs(fixef_2_m_c2_slope$statistic),
-                                               decreasing = TRUE), ]
-print(fixef_2_m_c2_slope)
-# new AIC = 9962.5
-
-# refit with the final formula to get the p values
-l_2_m_c2_slope <- with(implist_c2, lmer(mImp ~ Wmaxkg + sugu +
-                                          Selenium + Folate + Zink + aImp + age_cent + 
-                                          (age_cent | kood), REML = TRUE))
-results_l_2_m_c2_slope <- testEstimates(l_2_m_c2_slope)
-df_l_2_m_c2_slope <- as.data.frame(results_l_2_m_c2_slope$estimates)
-# path_2_m_c2 <- here("summary_data", "lmer_results", "mImp_c2.rds")
-# saveRDS(df_l_2_m_c2_slope, path_2_m_c2)
-
 ################################################################################
 # analysis of both cohorts joined together
 # mImp
@@ -325,23 +90,25 @@ df_l_2_m_c2_slope <- as.data.frame(results_l_2_m_c2_slope$estimates)
 # Calcium, Potassium, HOMA, Eggs, VitD, Protein, Niacin, FruitsBerries,
 # Manganese, Folate, kohort
 # are excluded
-fmla_mImp_slope_both <- formula(paste("mImp ~ sugu + Wmaxkg +  
-    Selenium + Sodium + Zink + Fish + Veget + 
-    Alco + aImp + Sodium:sugu + age_cent + (age_cent | kood)"))
+fmla_mImp_slope_both <- formula(paste("mImp ~ Wmaxkg +  
+    Selenium + aImp + Sodium * sugu +  Zink + Fish + Veget + Alco +
+    age_cent + (age_cent | kood)"))
 lmer_2_m_both_slope <- lmerModList(fmla_mImp_slope_both, data = implist_c_both, 
-                                 REML = TRUE)
+                                 REML = TRUE, control=lmerControl(optimizer="bobyqa"))
 summary(lmer_2_m_both_slope)
 fixef_2_m_both_slope <- modelFixedEff(lmer_2_m_both_slope)
 fixef_2_m_both_slope <- fixef_2_m_both_slope[order(abs(fixef_2_m_both_slope$statistic),
                                                decreasing = TRUE), ]
 print(fixef_2_m_both_slope)
-# new AIC = 19043.1
+# new AIC = 19043
 
 # refit with the final formula to get the p values
 l_m_c_both_slope <- with(implist_c_both, lmer(mImp ~ sugu + Wmaxkg +Selenium + 
-                                                Sodium + Zink + Fish + Veget + 
-                                                Alco + aImp + Sodium:sugu + 
-                                                age_cent + (age_cent | kood)))
+                                              Sodium + Zink + Fish + Veget + 
+                                              Alco + aImp + Sodium:sugu + 
+                                              age_cent + (age_cent | kood),
+                                              REML = TRUE, 
+                                              control=lmerControl(optimizer="bobyqa")))
 results_l_m_c_both_slope <- testEstimates(l_m_c_both_slope)
 df_l_m_c_both_slope <- as.data.frame(results_l_m_c_both_slope$estimates)
 path_m_c_both <- here("summary_data", "lmer_results", "mImp_c_both.rds")
@@ -352,25 +119,27 @@ saveRDS(df_l_m_c_both_slope, path_m_c_both)
 # VitB1, VitA, VitB12, VitD, Lipid, Protein, Iron, Fatsg, Milk, Niacin, HDL, 
 # Manganese, Folate, VitC, Sodium, VitB2, Eggs, Veget, Iodine, Meat, HOMA,
 # Potassium, LDL, Fish, kohort, VitE, Wmaxkg, BMI, SugSweets, Alco, Selenium,
-# FruitsBerries, Phosphorus, Magnesium, Calcium
+# FruitsBerries, Phosphorus, Magnesium, Calcium, kohort
 # are excluded
-fmla_aImp_slope_both <- formula(paste("aImp ~ sugu + 
-    Zink + Cerealprod + VitB6 + mImp + age_cent + kohort +
+fmla_aImp_slope_both <- formula(paste("aImp ~ Zink + Cerealprod + VitB6 + mImp +
+age_cent + sugu + age_cent:sugu +
     (age_cent | kood)"))
 lmer_2_a_both_slope <- lmerModList(fmla_aImp_slope_both, data = implist_c_both, 
-                                   REML = TRUE)
+                                   REML = TRUE, 
+                                   control=lmerControl(optimizer="bobyqa"))
 summary(lmer_2_a_both_slope)
 fixef_2_a_both_slope <- modelFixedEff(lmer_2_a_both_slope)
 fixef_2_a_both_slope <- fixef_2_a_both_slope[order(abs(fixef_2_a_both_slope$statistic),
                                                    decreasing = TRUE), ]
 print(fixef_2_a_both_slope)
-# new AIC = 19156
+# new AIC = 19155.4
 
 # refit with the final formula to get the p values
-l_a_c_both_slope <- with(implist_c_both, lmer(aImp ~ sugu + Zink + Cerealprod + 
-                                                VitB6 + mImp + age_cent + kohort +
-                                                (age_cent | kood), REML = TRUE))
+l_a_c_both_slope <- with(implist_c_both, lmer(aImp ~ Zink + Cerealprod + VitB6 + mImp +
+                                                age_cent + sugu + age_cent:sugu +
+                                                (age_cent | kood), REML = TRUE,
+                                              control=lmerControl(optimizer="bobyqa")))
 results_l_a_c_both_slope <- testEstimates(l_a_c_both_slope)
 df_l_a_c_both_slope <- as.data.frame(results_l_a_c_both_slope$estimates)
-path_a_c_both <- here("summary_data", "lmer_results", "mImp_c_both.rds")
+path_a_c_both <- here("summary_data", "lmer_results", "aImp_c_both.rds")
 saveRDS(df_l_a_c_both_slope, path_a_c_both) 

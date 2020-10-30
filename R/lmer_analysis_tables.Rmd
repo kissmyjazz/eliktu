@@ -1,0 +1,90 @@
+---
+title             : "ELIKTU: analysis of nutrition and impulsivity"
+shorttitle        : "impulsivity"
+author:
+  - name          : "Denis Matrov"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "jazzhole@gmail.com"
+
+affiliation:
+  - id            : "1"
+    institution   : "Tallinn University"
+    
+keywords          : ["food", "eliktu", "impulsivity"]
+wordcount         : "X"
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, echo = FALSE, include = FALSE, cache=FALSE}
+library("papaja")
+library("tidyverse")
+library("scales")
+library("broom")
+library("kableExtra")
+library("here")
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  cache.comments = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  error = FALSE,
+  echo = FALSE,
+  strip.white = TRUE,
+  comment = "#>",
+  fig.path = "../figures/",
+  results = "asis",
+  tidy = "styler",
+  dev = c('pdf', 'tiff'),
+  dev.args = list(pdf = list(colormodel = 'cmyk'), 
+                  tiff = list(compression = 'lzw')),
+  dpi = 600,
+  fig.width = 7,
+  fig.height = 7,
+  concordance = TRUE,
+  global.par = TRUE
+)
+
+par(font.main = 1, cex.main = 1.05)
+options(knitr.table.format = "latex")
+theme_set(theme_apa(base_size = 15) + theme(legend.position = "bottom"))
+```
+
+```{r data-prep}
+path_a <- here("summary_data", "lmer_results", "aImp_c_both.rds")
+path_m <- here("summary_data", "lmer_results", "mImp_c_both.rds")
+df_a <- read_rds(path_a)
+df_m <- read_rds(path_m)
+```
+
+# Predictors of maladaptive impulsivity scores
+The missing data was imputed by Blimp software separately for nutritional and impulsivity variables. Data was also divided and imputed separately by cohort. 
+The final model was chosen by the lowest AIC fit score. Statistically non-significant variables were included in the final model if their inclusion improved the AIC score. 
+
+```{r table-mImp}
+knitr::kable(round(df_m, 3), row.names = TRUE, caption = "Predictors of maladaptive impulsivity score") %>% kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
+# Predictors of adaptive impulsivity scores
+The missing data was imputed by Blimp software separately for nutritional and impulsivity variables. Data was also divided and imputed separately by cohort. 
+The final model was chosen by the lowest AIC fit score. Statistically non-significant variables were included in the final model if their inclusion improved the AIC score. 
+
+```{r table-aImp}
+knitr::kable(round(df_a, 3), row.names = TRUE, caption = "Predictors of adaptive impulsivity score") %>% kable_styling(bootstrap_options = c("striped", "condensed"))
+```
+
