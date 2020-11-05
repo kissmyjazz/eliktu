@@ -109,10 +109,14 @@ l_m_c_both_slope <- with(implist_c_both, lmer(mImp ~ sugu + Wmaxkg +Selenium +
                                               age_cent + (age_cent | kood),
                                               REML = TRUE, 
                                               control=lmerControl(optimizer="bobyqa")))
+# save for further visualisation with `emmeans`
+path_m_c_both <- here("mira_objects", "mitml_m_c_both_slope.rds")
+saveRDS(l_m_c_both_slope, path_m_c_both)
+
 results_l_m_c_both_slope <- testEstimates(l_m_c_both_slope)
 df_l_m_c_both_slope <- as.data.frame(results_l_m_c_both_slope$estimates)
-path_m_c_both <- here("summary_data", "lmer_results", "mImp_c_both.rds")
-saveRDS(df_l_m_c_both_slope, path_m_c_both) 
+# path_m_c_both <- here("summary_data", "lmer_results", "mImp_c_both.rds")
+# saveRDS(df_l_m_c_both_slope, path_m_c_both) 
 ################################################################################
 # aImp
 
@@ -139,7 +143,12 @@ l_a_c_both_slope <- with(implist_c_both, lmer(aImp ~ Zink + Cerealprod + VitB6 +
                                                 age_cent + sugu + age_cent:sugu +
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
+
+# save for further visualisation with `emmeans`
+path_a_c_both <- here("mira_objects", "mitml_a_c_both_slope.rds")
+saveRDS(l_a_c_both_slope, path_a_c_both)
+
 results_l_a_c_both_slope <- testEstimates(l_a_c_both_slope)
 df_l_a_c_both_slope <- as.data.frame(results_l_a_c_both_slope$estimates)
-path_a_c_both <- here("summary_data", "lmer_results", "aImp_c_both.rds")
-saveRDS(df_l_a_c_both_slope, path_a_c_both) 
+# path_a_c_both <- here("summary_data", "lmer_results", "aImp_c_both.rds")
+# saveRDS(df_l_a_c_both_slope, path_a_c_both) 
