@@ -9,6 +9,10 @@ library(mice)
 library(merTools)
 library(mitml)
 library(lmerTest)
+library(bbmle)
+library(DHARMa)
+library(glmmTMB)
+
 options(scipen=999)
 old <- theme_set(theme_bw())
 
@@ -81,6 +85,13 @@ implist_c2 <- as.mitml.list(split(df_blimp0_c2 , df_blimp0_c2$.imp))
 names <- names(df_blimp0_c1)
 implist_c_both <- as.mitml.list(split(df_blimp0 , df_blimp0$.imp))
 
+# filter out possible outliers for aImp modeling
+# Cases 842, 870, 962, 1107, 1713, 1741, 1767, 1798, 2207, 2243
+df_blimp0_no_outl <- df_blimp0 %>% 
+  dplyr::filter(!kood %in% c(842, 870, 962, 1107, 1713, 1741, 1767, 1798, 2207,
+                             2243))
+implist_c_both_no_outl <- as.mitml.list(split(df_blimp0_no_outl, 
+                                              df_blimp0_no_outl$.imp))
 ################################################################################
 # analysis of both cohorts joined together
 # mImp
@@ -110,8 +121,8 @@ l_m_c_both_slope <- with(implist_c_both, lmer(mImp ~ sugu + Wmaxkg +Selenium +
                                               REML = TRUE, 
                                               control=lmerControl(optimizer="bobyqa")))
 # save for further visualisation with `emmeans`
-path_m_c_both <- here("mira_objects", "mitml_m_c_both_slope.rds")
-saveRDS(l_m_c_both_slope, path_m_c_both)
+# path_m_c_both <- here("mira_objects", "mitml_m_c_both_slope.rds")
+# saveRDS(l_m_c_both_slope, path_m_c_both)
 
 results_l_m_c_both_slope <- testEstimates(l_m_c_both_slope)
 df_l_m_c_both_slope <- as.data.frame(results_l_m_c_both_slope$estimates)
@@ -145,10 +156,41 @@ l_a_c_both_slope <- with(implist_c_both, lmer(aImp ~ Zink + Cerealprod + VitB6 +
                                               control=lmerControl(optimizer="bobyqa")))
 
 # save for further visualisation with `emmeans`
-path_a_c_both <- here("mira_objects", "mitml_a_c_both_slope.rds")
-saveRDS(l_a_c_both_slope, path_a_c_both)
+# path_a_c_both <- here("mira_objects", "mitml_a_c_both_slope.rds")
+# saveRDS(l_a_c_both_slope, path_a_c_both)
 
 results_l_a_c_both_slope <- testEstimates(l_a_c_both_slope)
 df_l_a_c_both_slope <- as.data.frame(results_l_a_c_both_slope$estimates)
 # path_a_c_both <- here("summary_data", "lmer_results", "aImp_c_both.rds")
 # saveRDS(df_l_a_c_both_slope, path_a_c_both) 
+
+################################################################################
+# additional model selection to account for autocorrelation among the residuals
+# mImp
+lme_1_m_both_slope <- lme(mImp ~ Wmaxkg +  
+  Selenium + aImp + Sodium * sugu + Zink + Fish + Veget + Alco +
+  age_cent, random = list(kood = ~ 1), data = implist_c_both[[2]], 
+  method = "REML", correlation = corSymm())
+
+lme_m_c_both_slope <- with(implist_c_both, lme(mImp ~ Wmaxkg +  
+                         Selenium + aImp + Sodium * sugu + Zink + Fish + 
+                         Veget + Alco + age_cent, random = list(kood = ~ 1),
+                         method = "REML", correlation = corSymm()))
+results_lme_m_c_both_slope <- testEstimates(lme_m_c_both_slope)
+
+# path_m_c_both_lme <- here("mira_objects", "mitml_m_c_both_slope_lme.rds")
+# saveRDS(lme_m_c_both_slope, path_m_c_both_lme)
+################################################################################
+# additional model selection to account for autocorrelation among the residuals
+# aImp 
+# Accoding to AIC scores, no adjustments concerning the correlation structure 
+# of the residuals were necessary 
+lmer_a_c_both_slope_no_outl <- with(implist_c_both_no_outl, 
+                           lmer(aImp ~ Zink + Cerealprod + VitB6 + mImp +
+                               age_cent + sugu + age_cent:sugu + (age_cent|kood),
+                               REML = TRUE, 
+                               control=lmerControl(optimizer="bobyqa")))
+results_a_c_both_slope_no_outl <- testEstimates(lmer_a_c_both_slope_no_outl)
+# save for further visualisation with `emmeans`
+# path_a_c_both_no_outl <- here("mira_objects", "mitml_a_c_both_slope_no_outl.rds")
+# saveRDS(lmer_a_c_both_slope_no_outl, path_a_c_both_no_outl)
