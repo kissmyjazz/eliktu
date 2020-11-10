@@ -26,8 +26,8 @@ df <- read_csv(path) %>%
                               labels = c("15 years", "18 years", "25 years", 
                                          "33 years")))
 
-df_stats <- df %>% group_by(kohort) %>% 
-  summarise(median = median(VitB6, na.rm = TRUE))                                                                                     "33 years")))
+df_stats <- df %>% group_by(kohort) %>% summarise(median = median(VitB6, 
+                                                                  na.rm = TRUE))
 
 labels = c(`1` = "cohort: 1", `2` = "cohort: 2")
 
@@ -57,8 +57,10 @@ mira_mImp_lme <- as.mira(mitml_mImp_lme)
 mira_aImp_no_outl <- as.mira(mitml_aImp_no_outl)
 ################################################################################
 # initial diagnostics
-check_model(mira_mImp$analyses[[2]])
-check_model(mira_aImp$analyses[[2]])
+plot_mImp <- check_model(mira_mImp$analyses[[2]], check = c("qq", "homogeneity"),
+                         panel = TRUE)
+plot_aImp <- check_model(mira_aImp$analyses[[2]], check = c("qq", "homogeneity"),
+                         panel = TRUE)
 
 model_performance(mira_mImp$analyses[[2]])
 model_performance(mira_aImp$analyses[[2]])
