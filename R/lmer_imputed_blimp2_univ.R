@@ -3,6 +3,7 @@
 # wave were not imputed
 # univariate analysis
 # analysis of the effect of mother's education
+# deviation coding is used for sex factor
 
 library(here)
 library(tidyverse)
@@ -19,7 +20,7 @@ old <- theme_set(theme_bw())
 # load data ---------------------------------------------------------------
 # mother's education
 path <- here("mod_data", "ema_haridus.csv")
-df_educ <- read_csv(path) %>% select(kood, m_educ = K24_uus) %>% 
+df_educ <- read_csv(path) %>% dplyr::select(kood, m_educ = K24_uus) %>% 
   mutate(m_educ = factor(m_educ, levels = 1:3, labels = c("basic", 
   "secondary", "tertiary")), kood = factor(kood)) 
 
@@ -27,10 +28,13 @@ df_educ <- read_csv(path) %>% select(kood, m_educ = K24_uus) %>%
 path <- here("imputed_data", "blimp", "scaled_joined_df2.rds")
 df_blimp <- read_rds(path)
 
-
 # join mother's education data to main file -------------------------------
 df_blimp0 <- df_blimp %>% dplyr::filter(.imp != 0) %>% dplyr::select(-.id) %>% 
   left_join(df_educ, by = "kood")
+# apply deviation coding
+df_blimp0$sex_dev <- C(df_blimp0$sugu, sum)
+contrasts(df_blimp0$sex_dev) <- contrasts(df_blimp0$sex_dev) / 2
+
 implist_c_both <- as.mitml.list(split(df_blimp0 , df_blimp0$.imp))
 
 df_origin <- df_blimp %>% dplyr::filter(.imp == 0)
@@ -39,7 +43,7 @@ df_origin <- df_blimp %>% dplyr::filter(.imp == 0)
 # Mother's education was not an important factor for either mImp or aImp
 # # mImp
 # fmla_mImp_educ <- formula(paste("mImp ~ Wmaxkg +
-#     Selenium + aImp + Sodium * sugu +  Zink + Fish + Veget + Alco +
+#     Selenium + aImp + Sodium * sex_dev +  Zink + Fish + Veget + Alco +
 #     age_cent + m_educ + (age_cent | kood)"))
 # lmer_mImp_educ <- lmerModList(fmla_mImp_educ, data = implist_c_both,
 #                                    REML = TRUE, control=lmerControl(optimizer="bobyqa"))
@@ -51,7 +55,7 @@ df_origin <- df_blimp %>% dplyr::filter(.imp == 0)
 # 
 # # aImp
 # fmla_aImp_educ <- formula(paste("aImp ~ Zink + Cerealprod + VitB6 + mImp +
-# age_cent + sugu + age_cent:sugu + m_educ + (age_cent | kood)"))
+# age_cent + sex_dev + age_cent:sex_dev + m_educ + (age_cent | kood)"))
 # lmer_aImp_educ <- lmerModList(fmla_aImp_educ, data = implist_c_both,
 #                               REML = TRUE, control=lmerControl(optimizer="bobyqa"))
 # summary(lmer_aImp_educ)
@@ -64,7 +68,7 @@ df_origin <- df_blimp %>% dplyr::filter(.imp == 0)
 # all models include sex. other impulsivity subscale, and centred age
 # mImp
 # Sex
-lmer_mImp_sex <- with(implist_c_both, lmer(mImp ~ sugu + age_cent + 
+lmer_mImp_sex <- with(implist_c_both, lmer(mImp ~ sex_dev + age_cent + 
                                           (age_cent | kood), REML = TRUE,
                                           control=lmerControl(optimizer="bobyqa")))
 
@@ -73,7 +77,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_sex.rds")
 saveRDS(lmer_mImp_sex, path)
 
 # Wmaxkg
-lmer_mImp_Wmaxkg <- with(implist_c_both, lmer(mImp ~ Wmaxkg + sugu + age_cent + 
+lmer_mImp_Wmaxkg <- with(implist_c_both, lmer(mImp ~ Wmaxkg + sex_dev + age_cent + 
                                              (age_cent | kood), REML = TRUE,
                                            control=lmerControl(optimizer="bobyqa")))
 
@@ -82,7 +86,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_Wmaxkg.rds")
 saveRDS(lmer_mImp_Wmaxkg, path)
 
 # Selenium
-lmer_mImp_Selenium <- with(implist_c_both, lmer(mImp ~ Selenium + sugu + age_cent + 
+lmer_mImp_Selenium <- with(implist_c_both, lmer(mImp ~ Selenium + sex_dev + age_cent + 
                                                (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -91,7 +95,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_Selenium.rds")
 saveRDS(lmer_mImp_Selenium, path)
 
 # Zink
-lmer_mImp_Zink <- with(implist_c_both, lmer(mImp ~ Zink + sugu + age_cent + 
+lmer_mImp_Zink <- with(implist_c_both, lmer(mImp ~ Zink + sex_dev + age_cent + 
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -100,7 +104,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_Zink.rds")
 saveRDS(lmer_mImp_Zink, path)
 
 # Fish
-lmer_mImp_Fish <- with(implist_c_both, lmer(mImp ~ Fish + sugu + age_cent + 
+lmer_mImp_Fish <- with(implist_c_both, lmer(mImp ~ Fish + sex_dev + age_cent + 
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -109,7 +113,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_Fish.rds")
 saveRDS(lmer_mImp_Fish, path)
 
 # Veget
-lmer_mImp_Veget <- with(implist_c_both, lmer(mImp ~ Veget + sugu + age_cent + 
+lmer_mImp_Veget <- with(implist_c_both, lmer(mImp ~ Veget + sex_dev + age_cent + 
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -118,7 +122,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_Veget.rds")
 saveRDS(lmer_mImp_Veget, path)
 
 # Alco
-lmer_mImp_Alco <- with(implist_c_both, lmer(mImp ~ Alco + sugu + age_cent + 
+lmer_mImp_Alco <- with(implist_c_both, lmer(mImp ~ Alco + sex_dev + age_cent + 
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -127,7 +131,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_Alco.rds")
 saveRDS(lmer_mImp_Alco, path)
 
 # aImp
-lmer_mImp_aImp <- with(implist_c_both, lmer(mImp ~ aImp + sugu + age_cent + 
+lmer_mImp_aImp <- with(implist_c_both, lmer(mImp ~ aImp + sex_dev + age_cent + 
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -136,7 +140,7 @@ path <- here("mira_objects", "mitml_lmer_univ_mImp_aImp.rds")
 saveRDS(lmer_mImp_aImp, path)
 
 # Sodium
-lmer_mImp_Sodium <- with(implist_c_both, lmer(mImp ~ Sodium * sugu + age_cent + 
+lmer_mImp_Sodium <- with(implist_c_both, lmer(mImp ~ Sodium * sex_dev + age_cent + 
                                                 (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -146,7 +150,7 @@ saveRDS(lmer_mImp_Sodium, path)
 ################################################################################
 # aImp
 # Sex
-lmer_aImp_Sex <- with(implist_c_both, lmer(aImp ~ age_cent * sugu + 
+lmer_aImp_Sex <- with(implist_c_both, lmer(aImp ~ age_cent * sex_dev + 
                                               (age_cent | kood), REML = TRUE,
                                             control=lmerControl(optimizer="bobyqa")))
 
@@ -155,7 +159,7 @@ path <- here("mira_objects", "mitml_lmer_univ_aImp_Sex.rds")
 saveRDS(lmer_aImp_Sex, path)
 
 # Zink
-lmer_aImp_Zink <- with(implist_c_both, lmer(aImp ~ age_cent * sugu + Zink +
+lmer_aImp_Zink <- with(implist_c_both, lmer(aImp ~ age_cent * sex_dev + Zink +
                                               (age_cent | kood), REML = TRUE,
                                               control=lmerControl(optimizer="bobyqa")))
 
@@ -164,7 +168,7 @@ path <- here("mira_objects", "mitml_lmer_univ_aImp_Zink.rds")
 saveRDS(lmer_aImp_Zink, path)
 
 # Cerealprod
-lmer_aImp_Cerealprod <- with(implist_c_both, lmer(aImp ~ age_cent * sugu + Cerealprod +
+lmer_aImp_Cerealprod <- with(implist_c_both, lmer(aImp ~ age_cent * sex_dev + Cerealprod +
                                               (age_cent | kood), REML = TRUE,
                                             control=lmerControl(optimizer="bobyqa")))
 
@@ -173,7 +177,7 @@ path <- here("mira_objects", "mitml_lmer_univ_aImp_Cerealprod.rds")
 saveRDS(lmer_aImp_Cerealprod, path)
 
 # VitB6
-lmer_aImp_VitB6 <- with(implist_c_both, lmer(aImp ~ age_cent * sugu + VitB6 +
+lmer_aImp_VitB6 <- with(implist_c_both, lmer(aImp ~ age_cent * sex_dev + VitB6 +
                                               (age_cent | kood), REML = TRUE,
                                             control=lmerControl(optimizer="bobyqa")))
 
@@ -182,7 +186,7 @@ path <- here("mira_objects", "mitml_lmer_univ_aImp_VitB6.rds")
 saveRDS(lmer_aImp_VitB6, path)
 
 # mImp
-lmer_aImp_mImp <- with(implist_c_both, lmer(aImp ~ age_cent * sugu + mImp +
+lmer_aImp_mImp <- with(implist_c_both, lmer(aImp ~ age_cent * sex_dev + mImp +
                                               (age_cent | kood), REML = TRUE,
                                             control=lmerControl(optimizer="bobyqa")))
 
@@ -192,8 +196,8 @@ saveRDS(lmer_aImp_mImp, path)
 
 # fully adjusted model on original data (with missing) --------------------
 # mImp
-# lmer_mImp_orig <- lmer(mImp ~ sugu + Wmaxkg + Selenium + Sodium + Zink + Fish + 
-#                          Veget + Alco + aImp + Sodium:sugu + age_cent + 
+# lmer_mImp_orig <- lmer(mImp ~ sex_dev + Wmaxkg + Selenium + Sodium + Zink + Fish + 
+#                          Veget + Alco + aImp + Sodium:sex_dev + age_cent + 
 #                          (1 | kood), REML = TRUE, data = df_origin,
 #                           control=lmerControl(optimizer="bobyqa"))
 # path <- here("lmer_objects", "lmer_mImp_orig_data.rds")
@@ -201,7 +205,7 @@ saveRDS(lmer_aImp_mImp, path)
 # 
 # # aImp
 # lmer_aImp_orig <- lmer(aImp ~ Zink + Cerealprod + VitB6 + mImp +
-#                         age_cent + sugu + age_cent:sugu +
+#                         age_cent + sex_dev + age_cent:sex_dev +
 #                         (1 | kood), REML = TRUE, data = df_origin,
 #                        control=lmerControl(optimizer="bobyqa"))
 # path <- here("lmer_objects", "lmer_aImp_orig_data.rds")

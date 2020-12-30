@@ -76,7 +76,11 @@ old <- theme_set(theme_bw())
 ################################################################################
 path <- here("imputed_data", "blimp", "scaled_joined_df2.rds")
 df_blimp <- read_rds(path)
-df_blimp0 <- df_blimp %>% dplyr::filter(.imp != 0) %>% dplyr::select(-.id)
+df_blimp0 <- df_blimp %>% dplyr::filter(.imp != 0) %>% dplyr::select(-.id) 
+# apply deviation coding
+df_blimp0$sex_dev <- C(df_blimp0$sugu, sum)
+contrasts(df_blimp0$sex_dev) <- contrasts(df_blimp0$sex_dev) / 2
+
 df_blimp0_c1 <- df_blimp0 %>% dplyr::filter(kohort == 1) %>% 
   dplyr::select(-kohort)
 df_blimp0_c2 <- df_blimp0 %>% dplyr::filter(kohort == 2) %>% 
@@ -115,7 +119,7 @@ print(fixef_2_m_both_slope)
 # new AIC = 7337.4
 
 # refit with the final formula to get the p values
-l_m_c_both_slope <- with(implist_c_both, lmer(mImp ~ sugu + Wmaxkg +Selenium + 
+l_m_c_both_slope <- with(implist_c_both, lmer(mImp ~ sugu + Wmaxkg + Selenium + 
                                               Sodium + Zink + Fish + Veget + 
                                               Alco + aImp + Sodium:sugu + 
                                               age_cent + (age_cent | kood),
@@ -205,3 +209,34 @@ write.table(df_l_a_c_both_slope, file = path_a, sep = ",", quote = FALSE,
 # save for further visualisation with `emmeans`
 # path_a_c_both_no_outl <- here("mira_objects", "mitml_a_c_both_slope_no_outl.rds")
 # saveRDS(lmer_a_c_both_slope_no_outl, path_a_c_both_no_outl)
+
+# analysis redone with deviation coding of the sex ------------------------
+# mImp
+# refit with the final formula to get the p values
+l_m_c_both_slope_dev <- with(implist_c_both, lmer(mImp ~ sex_dev + Wmaxkg + Selenium + 
+                                                Sodium + Zink + Fish + Veget + 
+                                                Alco + aImp + Sodium:sex_dev + 
+                                                age_cent + (age_cent | kood),
+                                              REML = TRUE, 
+                                              control=lmerControl(optimizer="bobyqa")))
+# save for further visualisation with `emmeans`
+path_m_c_both <- here("mira_objects", "mitml_m_c_both_slope_dev.rds")
+saveRDS(l_m_c_both_slope_dev, path_m_c_both)
+
+################################################################################
+# aImp
+# refit with the final formula to get the p values
+l_a_c_both_slope_dev <- with(implist_c_both, lmer(aImp ~ Zink + Cerealprod + 
+                                                  VitB6 + mImp +
+                                                age_cent + sex_dev + 
+                                                  age_cent:sex_dev +
+                                                (age_cent | kood), REML = TRUE,
+                                              control=lmerControl(optimizer="bobyqa")))
+
+# save for further visualisation with `emmeans`
+path_a_c_both <- here("mira_objects", "mitml_a_c_both_slope_dev.rds")
+saveRDS(l_a_c_both_slope_dev, path_a_c_both)
+
+
+
+
