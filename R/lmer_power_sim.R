@@ -28,17 +28,22 @@ lmer_aImp <- lmer(aImp ~ Zink + Cerealprod + VitB6 + mImp + age_cent + sugu + ag
 # Alco has the lowest coefficient for mImp
 # Zink has the lowest coefficient for aImp
 # mImp
-power_mImp_AlCo <- powerSim(lmer_mImp, test = fixed("Alco", "pb"), nsim = 500)
-power_mImp_Sodium_sugu <- powerSim(lmer_mImp, 
-                                   test = fcompare(~ Wmaxkg + Selenium + aImp + 
-                                                     Sodium + sugu + Zink + Fish +
-                                                     Veget + Alco +
-                                                     age_cent, "pb"), nsim = 500)
-# aImp
-power_aImp_Zink <- powerSim(lmer_aImp, test = fixed("Zink", "pb"), nsim = 500)
-power_aImp_age_sugu <- powerSim(lmer_aImp, 
-                                   test = fcompare(~ Zink + Cerealprod + VitB6 +
-                                                     mImp + age_cent + 
-                                                     sugu , "pb"), nsim = 500)
-power_aImp_VitB6 <- powerSim(lmer_aImp, test = fixed("VitB6", "pb"), nsim = 500)
+# power_mImp_sugu <- powerSim(lmer_mImp, test = fixed("sugu", "pb"), nsim = 500)
+power_mImp_aImp <- powerSim(lmer_mImp, test = fixed("aImp", "pb"), nsim = 500)
+power_mImp_age_cent <- powerSim(lmer_mImp, test = fixed("age_cent", "pb"), nsim = 500)
+power_mImp_Zink <- powerSim(lmer_mImp, test = fixed("Zink", "pb"), nsim = 500)
+
+# power_mImp_AlCo <- powerSim(lmer_mImp, test = fixed("Alco", "pb"), nsim = 500)
+# power_mImp_Sodium_sugu <- powerSim(lmer_mImp, 
+#                                    test = fcompare(~ Wmaxkg + Selenium + aImp + 
+#                                                      Sodium + sugu + Zink + Fish +
+#                                                      Veget + Alco +
+#                                                      age_cent, "pb"), nsim = 500)
+# # aImp
+# power_aImp_Zink <- powerSim(lmer_aImp, test = fixed("Zink", "pb"), nsim = 500)
+# power_aImp_age_sugu <- powerSim(lmer_aImp, 
+#                                    test = fcompare(~ Zink + Cerealprod + VitB6 +
+#                                                      mImp + age_cent + 
+#                                                      sugu , "pb"), nsim = 500)
+# power_aImp_VitB6 <- powerSim(lmer_aImp, test = fixed("VitB6", "pb"), nsim = 500)
 ################################################################################
