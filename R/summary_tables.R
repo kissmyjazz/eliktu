@@ -27,8 +27,12 @@ df_blimp_orig <- read_csv(path) %>% dplyr::filter(!rowSums(is.na(.)) >= 64) %>%
                 mImp = sum(c(AMIS1, AMIS5, AMIS9, AMIS13, AMIS17, (6-AMIS21),
                              AMIS4, AMIS12, AMIS16, AMIS20, AMIS24))) %>%
   dplyr::ungroup() %>%
-  dplyr::select(-c(AMIS1:AMIS24))
-
+  dplyr::select(-c(AMIS1:AMIS24)) %>% 
+  dplyr::filter(!(kood == 1824 & age == 18)) %>% 
+  dplyr::filter(!(kood == 1157 & age == 33)) %>% 
+  dplyr::filter(!(kood == 1307 & age == 18))
+# deleted observations for kood 1824 at 18 years,
+# kood 1157 at 33 years, kood 1307 at 18 years
 
 # actual age
 path <- here("mod_data", "vanus.csv")
@@ -91,14 +95,14 @@ df_paper <- df_full %>% dplyr::select(sugu, preciseage, aImp, mImp, Wmaxkg,
 paper_summary_tbl <- df_paper %>% tbl_summary(by = "age") 
 
 # saving table as flextable
-# path_doc <- here("..", "Manuscript", "tables", "summary_table_main.docx")
-# ft <- paper_summary_tbl %>% as_flex_table()
-# ft <- font(ft, fontname = "Times New Roman", part = c("all"))
-# ft <- fontsize(ft, size = 8)
-# ft <- fontsize(ft, size = 10, part = c("header"))
-# ft <- fontsize(ft, size = 10, part = c("footer"))
-# ft <- line_spacing(ft, space = 1) %>% autofit() %>% fit_to_width(max_width = 11)
-# save_as_docx(ft, path = path_doc)
+path_doc <- here("..", "Manuscript", "tables", "summary_table_main.docx")
+ft <- paper_summary_tbl %>% as_flex_table()
+ft <- font(ft, fontname = "Times New Roman", part = c("all"))
+ft <- fontsize(ft, size = 8)
+ft <- fontsize(ft, size = 10, part = c("header"))
+ft <- fontsize(ft, size = 10, part = c("footer"))
+ft <- line_spacing(ft, space = 1) %>% autofit() %>% fit_to_width(max_width = 11)
+save_as_docx(ft, path = path_doc)
 
 # summary table for suppl materials ---------------------------------------
 df_suppl <- df_full %>% dplyr::select(-c(preciseage))

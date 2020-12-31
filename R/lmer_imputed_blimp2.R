@@ -76,7 +76,11 @@ old <- theme_set(theme_bw())
 ################################################################################
 path <- here("imputed_data", "blimp", "scaled_joined_df2.rds")
 df_blimp <- read_rds(path)
-df_blimp0 <- df_blimp %>% dplyr::filter(.imp != 0) %>% dplyr::select(-.id) 
+df_blimp0 <- df_blimp %>% 
+  dplyr::filter(!(kood == 1824 & age == 18)) %>% 
+  dplyr::filter(!(kood == 1157 & age == 33)) %>% 
+  dplyr::filter(!(kood == 1307 & age == 18)) %>% 
+  dplyr::filter(.imp != 0) %>% dplyr::select(-.id) 
 # apply deviation coding
 df_blimp0$sex_dev <- C(df_blimp0$sugu, sum)
 contrasts(df_blimp0$sex_dev) <- contrasts(df_blimp0$sex_dev) / 2

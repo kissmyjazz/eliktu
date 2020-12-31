@@ -29,7 +29,11 @@ path <- here("imputed_data", "blimp", "scaled_joined_df2.rds")
 df_blimp <- read_rds(path)
 
 # join mother's education data to main file -------------------------------
-df_blimp0 <- df_blimp %>% dplyr::filter(.imp != 0) %>% dplyr::select(-.id) %>% 
+df_blimp0 <- df_blimp %>% 
+  dplyr::filter(!(kood == 1824 & age == 18)) %>% 
+  dplyr::filter(!(kood == 1157 & age == 33)) %>% 
+  dplyr::filter(!(kood == 1307 & age == 18)) %>% 
+  dplyr::filter(.imp != 0) %>% dplyr::select(-.id) %>% 
   left_join(df_educ, by = "kood")
 # apply deviation coding
 df_blimp0$sex_dev <- C(df_blimp0$sugu, sum)
