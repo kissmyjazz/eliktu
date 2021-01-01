@@ -109,3 +109,9 @@ latent_scores <- function(df, esem_model) {
 }
 
 cfa_results <- latent_scores(df_amis_clean, esem_model = esem_model)
+
+path <- here("mod_data", "lavaan_fits.rds")
+saveRDS(cfa_results, path)
+params_df <- purrr::transpose(cfa_results$params) %>% 
+  data.table::as.data.table()
+scores_df <- dplyr::bind_rows(cfa_results$scores, .id = ".imp")
