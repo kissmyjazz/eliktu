@@ -96,8 +96,9 @@ latent_scores <- function(df, esem_model) {
  params <- vector(mode = "list", length = n)
  lvs <- vector(mode = "list", length = n)
  for (i in 1:n) {
-   df_temp <- df %>% dplyr::filter(.imp == i)
-   fit <- cfa(model = esem_model, data = df_temp, ordered = names(df_temp),
+   df_temp <- df %>% dplyr::filter(.imp == i) 
+   fit <- cfa(model = esem_model, data = df_temp, 
+              ordered = names(df_temp)[-c(1:3)],
        estimator = "WLSMV", std.lv = TRUE)
    params[[i]] <- fitmeasures(fit)
    lvs[[i]] <- cbind(df_temp[, c("kood", "age")], 
