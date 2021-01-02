@@ -11,6 +11,7 @@ library(easystats)
 library(broomExtra)
 library(gtsummary)
 library(huxtable)
+library(flextable)
 
 source("R/utils/tidy_melded.R")
 
@@ -77,6 +78,14 @@ mira_aImp_Cerealprod <- as.mira(mitml_aImp_Cerealprod)
 mira_aImp_VitB6 <- as.mira(mitml_aImp_VitB6)
 mira_aImp_mImp <- as.mira(mitml_aImp_mImp)
 
+# fully adjusted lmer models with latent factor scores
+path_mImp_lscores <- here("mira_objects", "mitml_m_c_both_slope_dev_lscores.rds")
+path_aImp_lscores <- here("mira_objects", "mitml_a_c_both_slope_dev_lscores.rds")
+mitml_mImp_lscores <- read_rds(path_mImp_lscores)
+mitml_aImp_lscores <- read_rds(path_aImp_lscores)
+mira_mImp_lscores <- as.mira(mitml_mImp_lscores)
+mira_aImp_lscores <- as.mira(mitml_aImp_lscores)
+
 # make custom classed objects `melded` to use with custom tidy functions----
 # fully adjusted lmer models
 mira_mImp_melded <- mira_mImp
@@ -115,12 +124,87 @@ class(mira_aImp_VitB6_melded) <- "melded"
 mira_aImp_mImp_melded <- mitml_aImp_mImp
 class(mira_aImp_mImp_melded) <- "melded"
 
+# fully adjusted lmer models with latent factor scores
+mira_mImp_lscores_melded <- mitml_mImp_lscores
+class(mira_mImp_lscores_melded) <- "melded"
+mira_aImp_lscores_melded <- mitml_aImp_lscores
+class(mira_aImp_lscores_melded) <- "melded"
+
 # make tables -------------------------------------------------------------
 # adj_mImp_model <- parameters(mira_mImp) %>% 
 #   select(Parameter, Coefficient, CI_low, CI_high, p) %>%
 #   parameters_table(stars = TRUE)
+# mImp
+mImp_coefs = c("Age centered at 18 years" = "age_cent",
+  "Sex: (female - male)" = "sex_dev1",
+  "Adaptive impulsivity score" = "aImp",
+  "Adaptive impulsivity score" = "aImp_lscore",  
+  "Maximum power output" = "Wmaxkg",
+  "Zinc" = "Zink",
+  "Selenium" = "Selenium",
+  "Sodium" = "Sodium",
+  "Fish" = "Fish",
+  "Vegetables" = "Veget",
+  "Alcohol" = "Alco",
+  "Sodium \U2715 Sex: (female - male)" = "sex_dev1:Sodium"
+  )
 
-# `gtsummary` does not work, use `huxtable` 
+# # `gtsummary` does not work, use `huxtable` 
+# adj_mImp_model_tbl <- huxreg("Unweighted composite scores:\nbest fitting model"=
+#   mira_mImp_melded,
+#   "Unweighted composite scores:\nmodel adjusted for sex and age" =
+#   mira_mImp_Sex_melded,
+#   "Latent factor scores:\nadjusted model" =
+#   mira_mImp_lscores_melded, statistics = c(N = "nobs"),
+#   error_format = "({conf.low}; {conf.high})", omit_coefs = "(Intercept)",
+#   note = "{stars}\nRegression coefficients are standardised\n95% CI are given in parentheses",
+#   coefs = mImp_coefs, borders = 0.4)
+# adj_mImp_model_tbl
+# ft_mImp <- adj_mImp_model_tbl %>% huxtable::as_flextable()
+# # saving table as flextable
+# path_mImp <- here("..", "Manuscript", "tables", "mImp_regress_tbl.docx")
+# ft_mImp <- font(ft_mImp, fontname = "Times New Roman", part = c("all"))
+# ft_mImp <- fontsize(ft_mImp, size = 12)
+# ft_mImp <- fontsize(ft_mImp, size = 12, part = c("header"))
+# ft_mImp <- fontsize(ft_mImp, size = 12, part = c("footer"))
+# ft_mImp <- line_spacing(ft_mImp, space = 1) %>% autofit() %>% 
+#   fit_to_width(max_width = 7.5)
+# save_as_docx(ft_mImp, path = path_mImp)
 
-adj_mImp_model_tbl <- mira_mImp_melded %>% 
-  huxreg(statistics = "AIC")
+# aImp
+aImp_coefs = c("Age centered at 18 years" = "age_cent",
+               "Sex: (female - male)" = "sex_dev1",
+               "Maladaptive impulsivity score" = "mImp",
+               "Maladaptive impulsivity score" = "mImp_lscore",  
+               "Zinc" = "Zink",
+               "Vitamin B6" = "VitB6",
+               "Cereal products" = "Cerealprod",
+               "Age \U2715 Sex: (female - male)" = "age_cent:sex_dev1"
+)
+
+adj_aImp_model_tbl <- huxreg("Unweighted composite scores:\nbest fitting model"=
+  mira_aImp_melded,
+  "Unweighted composite scores:\nmodel adjusted for sex and age" =
+  mira_aImp_Sex_melded,
+  "Latent factor scores:\nadjusted model" =
+  mira_aImp_lscores_melded, statistics = c(N = "nobs"),
+  error_format = "({conf.low}; {conf.high})", omit_coefs = "(Intercept)",
+  note = "{stars}\nRegression coefficients are standardised\n95% CI are given in parentheses",
+  coefs = aImp_coefs, borders = 0.4)
+adj_aImp_model_tbl
+ft_aImp <- adj_aImp_model_tbl %>% huxtable::as_flextable()
+
+# saving table as flextable
+path_aImp <- here("..", "Manuscript", "tables", "aImp_regress_tbl.docx")
+ft_aImp <- font(ft_aImp, fontname = "Times New Roman", part = c("all"))
+ft_aImp <- fontsize(ft_aImp, size = 12)
+ft_aImp <- fontsize(ft_aImp, size = 12, part = c("header"))
+ft_aImp <- fontsize(ft_aImp, size = 12, part = c("footer"))
+ft_aImp <- line_spacing(ft_aImp, space = 1) %>% autofit() %>%
+  fit_to_width(max_width = 7.5)
+save_as_docx(ft_aImp, path = path_aImp)
+
+# temp table to find out missing coefs ------------------------------------
+temp_tbl <- huxreg(mira_aImp_Cerealprod_melded, statistics = character(0),
+                   error_format = "({conf.low}; {conf.high})")
+temp_tbl
