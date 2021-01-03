@@ -41,20 +41,21 @@ g_hist_VitB6
 # ggsave("figures/g_hist_VitB6.pdf", width = 7, height = 5, dpi = 300)
 ################################################################################
 # load data files and convert to `mira`
-path_mImp <- here("mira_objects", "mitml_m_c_both_slope.rds")
-path_aImp <- here("mira_objects", "mitml_a_c_both_slope.rds")
-path_mImp_lme <- here("mira_objects", "mitml_m_c_both_slope_lme.rds")
-path_aImp_no_outl <- here("mira_objects", "mitml_a_c_both_slope_no_outl.rds")
-
+# main model
+path_mImp <- here("mira_objects", "mitml_m_c_both_slope_dev.rds")
+path_aImp <- here("mira_objects", "mitml_a_c_both_slope_dev.rds")
 mitml_mImp <- read_rds(path_mImp)
 mitml_aImp <- read_rds(path_aImp)
-mitml_mImp_lme <- read_rds(path_mImp_lme)
-mitml_aImp_no_outl  <- read_rds(path_aImp_no_outl)
-
 mira_mImp <- as.mira(mitml_mImp)
 mira_aImp <- as.mira(mitml_aImp)
-mira_mImp_lme <- as.mira(mitml_mImp_lme)
-mira_aImp_no_outl <- as.mira(mitml_aImp_no_outl)
+
+# latent scores model
+path_mImp_lscores <- here("mira_objects", "mitml_m_c_both_slope_dev_lscores.rds")
+path_aImp_lscores <- here("mira_objects", "mitml_a_c_both_slope_dev_lscores.rds")
+mitml_mImp_lscores <- read_rds(path_mImp_lscores)
+mitml_aImp_lscores <- read_rds(path_aImp_lscores)
+mira_mImp_lscores <- as.mira(mitml_mImp_lscores)
+mira_aImp_lscores <- as.mira(mitml_aImp_lscores)
 ################################################################################
 # initial diagnostics
 plot_mImp <- check_model(mira_mImp$analyses[[2]], check = c("qq", "homogeneity"),
@@ -87,3 +88,26 @@ check_outliers(mira_mImp$analyses[[2]])
 check_outliers(mira_aImp$analyses[[2]])
 # Warning: 10 outliers detected (cases 842, 870, 962, 1107, 1713, 1741, 1767, 
 # 1798, 2207, 2243)
+# 
+# r squared ---------------------------------------------------------------
+mImp_r2_df <- map(mira_mImp$analyses, r2) %>% purrr::transpose() %>% 
+  data.table::as.data.table() %>% mutate_all(as.numeric) %>% 
+  summarise_all(mean)
+mImp_r2_df
+
+aImp_r2_df <- map(mira_aImp$analyses, r2) %>% purrr::transpose() %>% 
+  data.table::as.data.table() %>% mutate_all(as.numeric) %>% 
+  summarise_all(mean)
+aImp_r2_df
+
+mImp_r2_lscores_df <- map(mira_mImp_lscores$analyses, r2) %>% 
+  purrr::transpose() %>% 
+  data.table::as.data.table() %>% mutate_all(as.numeric) %>% 
+  summarise_all(mean)
+mImp_r2_lscores_df
+
+aImp_r2_lscores_df <- map(mira_aImp_lscores$analyses, r2) %>% 
+  purrr::transpose() %>% 
+  data.table::as.data.table() %>% mutate_all(as.numeric) %>% 
+  summarise_all(mean)
+aImp_r2_lscores_df
