@@ -17,7 +17,11 @@ options(scipen = 999)
 path <- here("mod_data", "lavaan_fits.rds")
 cfa_results <- read_rds(path)
 params_df <- purrr::transpose(cfa_results$params) %>% 
-  data.table::as.data.table()
+  data.table::as.data.table() %>% mutate_all(as.numeric)
+summary_params_df = params_df %>% 
+  dplyr::summarise_all(list(mean = ~mean(.x, na.rm = TRUE),
+                    conf_low = ~quantile(.x, probs = 0.025, na.rm = TRUE),
+                    conf_high = ~quantile(.x, probs = 0.975, na.rm = TRUE)))
 scores_df <- dplyr::bind_rows(cfa_results$scores, .id = ".imp") %>% 
   dplyr::rename(aImp_lscore = F2, mImp_lscore = F1) %>% 
   dplyr::mutate(.imp = as.numeric(.imp), kood = factor(kood))

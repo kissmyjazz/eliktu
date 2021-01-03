@@ -2,8 +2,13 @@ library(tidyverse)
 library(here)
 path <- here("mod_data", "df_for_imputation.csv")
 as_numeric_factor <- function(x) {as.numeric(levels(x))[x]}
-df <- read_csv(path)
-df <- df %>% dplyr::mutate(sugu = factor(sugu),
+df <- read_csv(path) 
+# remove cases where all observations for a particular wave are missing
+df <- df %>% dplyr::filter(!rowSums(is.na(.)) >= 64) %>% 
+  dplyr::filter(!(kood == 1824 & age == 18)) %>% 
+  dplyr::filter(!(kood == 1157 & age == 33)) %>% 
+  dplyr::filter(!(kood == 1307 & age == 18)) %>% 
+  dplyr::mutate(sugu = factor(sugu),
                            sugu = fct_recode(sugu, `0` = "female", `1` = "male"))
 ################################################################################
 # the data is prepared for EFA by FACTOR program in Windows
@@ -59,3 +64,4 @@ path_both_cohorts <- here("mod_data", "df_for_factor_all.dat")
 
 write_delim(df_both_cohorts, path_both_cohorts, na = "999", col_names = FALSE)
 
+nrow(df_both_cohorts)
