@@ -17,7 +17,14 @@ print_console <- function(df) {
 }
 
 path <- here("mod_data", "df_for_imputation.csv")
-df <- read_csv(path)
+df <- read_csv(path) %>% 
+  dplyr::filter(!rowSums(is.na(.)) >= 64) %>% 
+  dplyr::filter(!(kood == 1824 & age == 18)) %>% 
+  dplyr::filter(!(kood == 1157 & age == 33)) %>% 
+  dplyr::filter(!(kood == 1307 & age == 18)) %>% 
+  dplyr::rename(Zinc = Zink, MPO = Wmaxkg, Carbohyd = Carb, DEI = kcal,
+                "Cereal prod" = Cerealprod, Fats = Fatsg, Lipids = Lipid,
+                Alcohol = Alco)
 
 df_cohort1 <- df %>% dplyr::filter(kohort == 1) %>% dplyr::select(-kohort)
 df_cohort2 <- df %>% dplyr::filter(kohort == 2) %>% dplyr::select(-kohort)
@@ -72,23 +79,31 @@ g_cohort2_AMIS_13_24 <- JointAI::plot_all(as.data.frame(df_cohort2_AMIS[, 13:24]
 # JointAI visualisation of other items
 df_cohort1_other <- df_cohort1[, -c(1:3, 44:67)]
 df_cohort2_other <- df_cohort2[, -c(1:3, 44:67)]
-par(mgp = c(3,1,0), mar = c(3, 4.5, 3.1, 4))
+par(mgp = c(3,1,0), mar = c(3, 3, 3.1, 3))
 # cohort 1
 g_cohort1_other_1_20 <- JointAI::plot_all(as.data.frame(df_cohort1_other[, 1:20]),
                                          allNA = FALSE,
                                          fill = '#e30f41', breaks = 50,
-                                         border ='#e30f41', ncol = 5)
+                                         border ='#e30f41', ncol = 5,
+                                         cex = 0.8, cex.main = 0.4,
+                                         ylab = NULL)
 g_cohort1_other_21_40 <- JointAI::plot_all(as.data.frame(df_cohort1_other[, 21:40]),
                                           allNA = FALSE,
                                           fill = '#e30f41', breaks = 50,
-                                          border ='#e30f41', ncol = 5)
+                                          border ='#e30f41', ncol = 5,
+                                          cex = 0.8, cex.main = 0.4,
+                                          ylab = NULL)
 # cohort 2
 g_cohort2_other_1_20 <- JointAI::plot_all(as.data.frame(df_cohort2_other[, 1:20]),
                                           allNA = FALSE,
                                           fill = '#e30f41', breaks = 50,
-                                          border ='#e30f41', ncol = 5)
+                                          border ='#e30f41', ncol = 5,
+                                          cex = 0.8, cex.main = 0.4,
+                                          ylab = NULL)
 g_cohort2_other_21_40 <- JointAI::plot_all(as.data.frame(df_cohort2_other[, 21:40]),
                                            allNA = FALSE,
                                            fill = '#e30f41', breaks = 50,
-                                           border ='#e30f41', ncol = 5)
+                                           border ='#e30f41', ncol = 5,
+                                           cex = 0.8, cex.main = 0.4,
+                                           ylab = NULL)
 ################################################################################

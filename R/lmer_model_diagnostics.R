@@ -60,9 +60,10 @@ mira_aImp_lscores <- as.mira(mitml_aImp_lscores)
 # initial diagnostics
 plot_mImp <- check_model(mira_mImp$analyses[[2]], check = c("qq", "homogeneity"),
                          panel = TRUE)
+plot_mImp
 plot_aImp <- check_model(mira_aImp$analyses[[2]], check = c("qq", "homogeneity"),
                          panel = TRUE)
-
+plot_aImp
 model_performance(mira_mImp$analyses[[2]])
 model_performance(mira_aImp$analyses[[2]])
 
