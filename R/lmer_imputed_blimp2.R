@@ -85,13 +85,13 @@ df_blimp0 <- df_blimp %>%
 df_blimp0$sex_dev <- C(df_blimp0$sugu, sum)
 contrasts(df_blimp0$sex_dev) <- contrasts(df_blimp0$sex_dev) / 2
 
-df_blimp0_c1 <- df_blimp0 %>% dplyr::filter(kohort == 1) %>% 
-  dplyr::select(-kohort)
-df_blimp0_c2 <- df_blimp0 %>% dplyr::filter(kohort == 2) %>% 
-  dplyr::select(-kohort)
-implist_c1 <- as.mitml.list(split(df_blimp0_c1 , df_blimp0_c1$.imp))
-implist_c2 <- as.mitml.list(split(df_blimp0_c2 , df_blimp0_c2$.imp))
-names <- names(df_blimp0_c1)
+# df_blimp0_c1 <- df_blimp0 %>% dplyr::filter(kohort == 1) %>% 
+#   dplyr::select(-kohort)
+# df_blimp0_c2 <- df_blimp0 %>% dplyr::filter(kohort == 2) %>% 
+#   dplyr::select(-kohort)
+# implist_c1 <- as.mitml.list(split(df_blimp0_c1 , df_blimp0_c1$.imp))
+# implist_c2 <- as.mitml.list(split(df_blimp0_c2 , df_blimp0_c2$.imp))
+# names <- names(df_blimp0_c1)
 implist_c_both <- as.mitml.list(split(df_blimp0 , df_blimp0$.imp))
 
 # filter out possible outliers for aImp modeling
