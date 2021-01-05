@@ -372,4 +372,4 @@ grid_Sodium_VitB6 <- plot_grid(g_m_sex_Sodium_age_t, g_a_sex_VitB6_age_t,
                       label_size = 12, rel_widths = c(1, 1))
 grid_Sodium_VitB6
 path <- here("figures", "lmer_plot.pdf")
-save_plot(path, grid_Sodium_VitB6, base_width = 7.5, base_height = 4, dpi = 600)
+save_plot(path, grid_Sodium_VitB6, base_width = 7.5, base_height = 4, dpi = 1200)
