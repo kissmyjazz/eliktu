@@ -27,6 +27,30 @@ df_educ <- read_csv(path) %>% dplyr::select(kood, m_educ = K24_uus) %>%
 # imputed data
 path <- here("imputed_data", "blimp", "scaled_joined_df2.rds")
 df_blimp <- read_rds(path)
+# some housekeeping tasks due to the misplaced original data
+# kood 1162, age 33, the results were misplaces to kood 1157, age 33 
+vec_blimp_1157 <- df_blimp %>% dplyr::filter(kood == 1157, age == 33, 
+                                             .imp == 0) %>%
+  dplyr::select(Calcium:kcal, Carb:Cerealprod, Eggs:FruitsBerries,
+                Lipid:Alco) %>% unlist(., use.names = TRUE)
+df_blimp_1157 <- df_blimp %>% dplyr::filter(kood == 1157, age == 33, 
+                                            .imp == 0) %>%
+  dplyr::select(Calcium:kcal, Carb:Cerealprod, Eggs:FruitsBerries,
+                Lipid:Alco) 
+df_blimp[which((df_blimp$kood == 1162) & (df_blimp$age == 33)), 
+         names(df_blimp_1157)] <- matrix(rep(vec_blimp_1157, 101), nrow = 101, 
+                                         byrow = TRUE)
+
+# kood 1825, age 18, the results were misplaces to kood 1824, age 18
+vec_blimp_1824 <- df_blimp %>% 
+  dplyr::filter(kood == 1824, age == 18, .imp == 0) %>%
+  dplyr::select(CHL, HDL:LDL) %>% unlist(., use.names = TRUE) 
+df_blimp_1824 <- df_blimp %>% 
+  dplyr::filter(kood == 1824, age == 18, .imp == 0) %>%
+  dplyr::select(CHL, HDL:LDL)
+df_blimp[which((df_blimp$kood == 1825) & (df_blimp$age == 18)), 
+         names(df_blimp_1824)] <- matrix(rep(vec_blimp_1824, 101), nrow = 101, 
+                                         byrow = TRUE)
 
 # join mother's education data to main file -------------------------------
 df_blimp0 <- df_blimp %>% 
